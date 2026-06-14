@@ -1,0 +1,9 @@
+title: ver-kyker Research Wiki
+description: Personal research wiki — concepts, topics, and annotated notes.
+baseurl: "/wiki"
+url: "https://jaxsbr.github.io"
+
+theme: minima
+markdown: kramdown
+kramdown:
+  input: GFM
