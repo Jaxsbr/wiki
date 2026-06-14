@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Slop Demo — Annotated</title>
+  <!-- TELL #11 — Inter: the single most common AI typography default -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ─── DEMO CHROME ───────────────────────────────────────── */
+    body { margin: 0; padding-top: 48px; font-family: 'Inter', sans-serif; }
+
+    .demo-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 48px;
+      background: #111; border-bottom: 2px solid #ef4444;
+      display: flex; align-items: center; gap: 16px; padding: 0 20px;
+      z-index: 9999; font-family: monospace; font-size: 13px; color: #f5f5f5;
+    }
+    .demo-bar strong { color: #ef4444; }
+    .demo-bar a { color: #93c5fd; text-decoration: none; margin-left: auto; }
+    .demo-bar a:hover { text-decoration: underline; }
+
+    /* ─── TELL BADGES ───────────────────────────────────────── */
+    .tell {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; min-width: 22px;
+      background: #ef4444; color: white;
+      border-radius: 50%; font-size: 11px; font-weight: 800;
+      font-family: monospace; border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #ef4444;
+      vertical-align: middle; position: relative; top: -1px;
+      margin: 0 3px; cursor: default;
+    }
+    .tell-abs {
+      position: absolute; display: flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; min-width: 26px;
+      background: #ef4444; color: white;
+      border-radius: 50%; font-size: 12px; font-weight: 800;
+      font-family: monospace; border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #ef4444; z-index: 100; cursor: default;
+    }
+
+    /* ─── SLOP PAGE STYLES ──────────────────────────────────── */
+
+    /* TELL #1 — Dark default: AI reaches for dark mode without being asked */
+    .slop-page { background: #0c0c1a; color: #e2e8f0; }
+
+    /* TELL #2 — "VibeCode Purple": lavender-to-blue gradient */
+    .hero {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+      padding: 100px 40px 80px; text-align: center;
+    }
+
+    /* TELL #3 — Decorative floating orbs */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.35; pointer-events: none;
+    }
+    .orb-1 { width: 400px; height: 400px; background: #a855f7; top: -100px; left: -80px; }
+    .orb-2 { width: 300px; height: 300px; background: #3b82f6; bottom: -80px; right: -60px; }
+
+    /* TELL #4 — Small pill badge above headline */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 9999px; padding: 4px 14px; font-size: 13px;
+      color: #e0e7ff; margin-bottom: 24px; backdrop-filter: blur(4px);
+    }
+
+    /* TELL #5 — Vague headline with em-dash */
+    .hero h1 {
+      font-size: 56px; font-weight: 800; line-height: 1.1;
+      color: #fff; margin: 0 0 20px;
+      /* TELL #6 — Gradient text */
+      background: linear-gradient(90deg, #fff 60%, #a5b4fc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 18px; color: rgba(255,255,255,0.7);
+      max-width: 520px; margin: 0 auto 36px; line-height: 1.6;
+    }
+
+    /* TELL #7 — Generic CTAs */
+    .cta-group { display: flex; gap: 12px; justify-content: center; }
+    .btn-primary {
+      background: #fff; color: #1e1b4b;
+      padding: 12px 28px; border-radius: 8px; /* TELL #10 — 8px uniform radius */
+      font-weight: 600; font-size: 15px; border: none; cursor: pointer;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1); color: #fff;
+      padding: 12px 28px; border-radius: 8px;
+      font-weight: 600; font-size: 15px; border: 1px solid rgba(255,255,255,0.3); cursor: pointer;
+    }
+
+    /* Features */
+    .section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+
+    /* TELL #8 — Tiny all-caps label before section heading */
+    .section-label {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.15em;
+      text-transform: uppercase; color: #818cf8; margin-bottom: 12px;
+    }
+    .section-heading { font-size: 36px; font-weight: 700; color: #f1f5f9; margin: 0 0 48px; }
+
+    /* TELL #9 — Three-column feature card grid */
+    .card-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+
+    /* TELL #10 — Uniform 16px border radius + glassmorphism */
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px; /* uniform 16px everywhere */
+      padding: 24px; /* TELL #12 — uniform 24px padding everywhere */
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(8px); /* glassmorphism */
+      position: relative;
+      /* TELL #11 — Colored left border stripe */
+      border-left: 3px solid #7c3aed;
+    }
+
+    /* TELL #13 — Icon floating above heading, not integrated */
+    .card-icon {
+      font-size: 28px; margin-bottom: 14px; display: block;
+    }
+    .card h3 { font-size: 18px; font-weight: 600; color: #f1f5f9; margin: 0 0 10px; }
+    .card p { font-size: 14px; color: #94a3b8; line-height: 1.6; margin: 0; }
+
+    /* Stats */
+    .stats-row {
+      background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: center; gap: 0;
+    }
+    .stat {
+      padding: 32px 60px; text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-size: 32px; font-weight: 800; color: #818cf8; }
+    .stat-label { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+    /* Testimonials */
+    .testimonials { max-width: 1100px; margin: 0 auto; padding: 80px 40px; }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; }
+    .testimonial {
+      background: rgba(255,255,255,0.04); border-radius: 16px;
+      padding: 24px; border: 1px solid rgba(255,255,255,0.08);
+    }
+    .testimonial p { font-size: 15px; color: #94a3b8; line-height: 1.7; margin: 0 0 16px; font-style: italic; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: white; font-size: 14px;
+    }
+    .author-name { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+    .author-title { font-size: 12px; color: #64748b; }
+
+    /* Footer CTA */
+    .footer-cta {
+      background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+      text-align: center; padding: 80px 40px;
+    }
+    .footer-cta h2 { font-size: 36px; font-weight: 700; color: #fff; margin: 0 0 16px; }
+    .footer-cta p { color: rgba(255,255,255,0.7); margin: 0 0 32px; }
+
+    /* ─── LEGEND ────────────────────────────────────────────── */
+    .legend {
+      background: #0f172a; border-top: 3px solid #ef4444;
+      padding: 60px 40px;
+    }
+    .legend h2 {
+      color: #ef4444; font-family: monospace; font-size: 20px;
+      margin: 0 0 32px; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .legend ol { padding: 0 0 0 24px; margin: 0; columns: 2; column-gap: 48px; }
+    .legend li {
+      color: #cbd5e1; font-size: 14px; line-height: 1.8;
+      margin-bottom: 8px; break-inside: avoid;
+    }
+    .legend li strong { color: #f8fafc; }
+    .legend-note {
+      margin-top: 32px; padding: 16px 20px;
+      background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444;
+      border-radius: 4px; color: #94a3b8; font-size: 13px; line-height: 1.6;
+    }
+    .compare-link {
+      display: inline-block; margin-top: 24px;
+      background: #1e40af; color: #bfdbfe;
+      padding: 10px 22px; border-radius: 6px; text-decoration: none;
+      font-weight: 600; font-size: 14px;
+    }
+    .compare-link:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+
+<!-- Demo chrome -->
+<div class="demo-bar">
+  <strong>⚠ ANNOTATED DEMO</strong>
+  <span>Red circles = AI-slop tells. Count how many you missed before reading the legend.</span>
+  <a href="/demos/good-design.html">→ Compare: Well-Designed Version</a>
+</div>
+
+<div class="slop-page">
+
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <div class="hero" style="position:relative">
+    <!-- Tell badges positioned at edge of each problem zone -->
+    <span class="tell-abs" style="top:12px;left:12px" title="Tell #1">1</span>
+    <span class="tell-abs" style="top:12px;right:12px" title="Tell #2">2</span>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <!-- Tell #3 badge -->
+    <span class="tell-abs" style="top:52px;left:12px" title="Tell #3">3</span>
+
+    <!-- TELL #4 — Badge above headline -->
+    <div style="position:relative;display:inline-block;">
+      <div class="hero-badge">✨ AI-Powered Platform</div>
+      <span class="tell-abs" style="top:-10px;right:-30px">4</span>
+    </div>
+
+    <br>
+
+    <!-- TELL #5 + #6 -->
+    <div style="position:relative;display:inline-block;">
+      <h1>Build the Future—<br>Without Limits</h1>
+      <span class="tell-abs" style="top:0;right:-30px">5</span>
+      <span class="tell-abs" style="top:34px;right:-60px">6</span>
+    </div>
+
+    <p>Streamline your workflow, empower your team, and unlock world-class productivity with our cutting-edge platform.</p>
+
+    <!-- TELL #7 -->
+    <div style="position:relative;display:inline-block;">
+      <div class="cta-group">
+        <button class="btn-primary">Get Started</button>
+        <button class="btn-secondary">Learn More</button>
+      </div>
+      <span class="tell-abs" style="top:-10px;right:-30px">7</span>
+    </div>
+  </div>
+
+  <!-- ── STATS ─────────────────────────────────────────────── -->
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">10k+</div><div class="stat-label">Happy customers</div></div>
+    <div class="stat"><div class="stat-num">99.9%</div><div class="stat-label">Uptime guaranteed</div></div>
+    <div class="stat"><div class="stat-num">50%</div><div class="stat-label">Faster than before</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">World-class support</div></div>
+  </div>
+
+  <!-- ── FEATURES ──────────────────────────────────────────── -->
+  <div class="section">
+    <!-- TELL #8 -->
+    <div style="position:relative;display:inline-block;">
+      <div class="section-label">WHY CHOOSE US</div>
+      <span class="tell-abs" style="top:-10px;right:-30px">8</span>
+    </div>
+    <div class="section-heading">Everything You Need to Scale</div>
+
+    <!-- TELL #9 -->
+    <div style="position:relative;">
+      <span class="tell-abs" style="top:-20px;left:0">9</span>
+      <div class="card-grid">
+
+        <!-- TELL #10, #11, #12, #13 all on these cards -->
+        <div style="position:relative;">
+          <span class="tell-abs" style="top:-10px;right:-10px">10</span>
+          <span class="tell-abs" style="top:20px;right:-10px">11</span>
+          <span class="tell-abs" style="top:50px;right:-10px">12</span>
+          <div class="card">
+            <span class="tell-abs" style="top:12px;left:12px">13</span>
+            <span class="card-icon">⚡</span>
+            <h3>Lightning Fast</h3>
+            <p>Supercharge your productivity with our world-class infrastructure designed for scale.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="card-icon">🔒</span>
+          <h3>Enterprise Security</h3>
+          <p>Keep your data safe with cutting-edge encryption and compliance-ready architecture.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-icon">📊</span>
+          <h3>Powerful Analytics</h3>
+          <p>Unlock actionable insights and empower your team with real-time data visualization.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TESTIMONIALS ───────────────────────────────────────── -->
+  <div class="testimonials">
+    <div style="position:relative;display:inline-block;">
+      <div class="section-label">WHAT PEOPLE SAY</div>
+    </div>
+    <div class="section-heading" style="margin-bottom:32px">Trusted by Teams Worldwide</div>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <p>"SyncFlow has completely transformed how our team collaborates. The platform is intuitive, fast, and reliable—it's a game-changer."</p>
+        <div class="testimonial-author">
+          <div class="avatar">JS</div>
+          <div>
+            <div class="author-name">Jordan Smith</div>
+            <div class="author-title">Head of Product · Acme Corp</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p>"We've tried everything and nothing comes close. SyncFlow empowers our team to do more with less—the ROI has been incredible."</p>
+        <div class="testimonial-author">
+          <div class="avatar">AL</div>
+          <div>
+            <div class="author-name">Alex Lee</div>
+            <div class="author-title">CTO · TechStart</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER CTA ─────────────────────────────────────────── -->
+  <div class="footer-cta">
+    <h2>Ready to Build the Future?</h2>
+    <p>Join thousands of forward-thinking teams already using SyncFlow.</p>
+    <button class="btn-primary">Get Started for Free</button>
+  </div>
+
+</div><!-- /slop-page -->
+
+<!-- ─── LEGEND ──────────────────────────────────────────────── -->
+<div class="legend">
+  <h2>🔴 13 AI-Slop Tells — Annotated</h2>
+  <ol>
+    <li><strong>Dark-mode default</strong> — AI reaches for dark backgrounds without being asked, because dark SaaS sites dominated 2023–24 training data</li>
+    <li><strong>"VibeCode Purple" gradient</strong> — lavender-to-blue hero gradient is the single most cited AI tell; overrepresented in training data from that era</li>
+    <li><strong>Decorative floating orbs</strong> — blurred gradient circles with no informational purpose; fill space with visual noise</li>
+    <li><strong>Badge above headline</strong> — small pill reading "AI-Powered", "Trusted by 10k+", or "New Feature"; signals template origin</li>
+    <li><strong>Vague headline with em-dash</strong> — "Build the Future—Without Limits"; nothing pinned to what the product actually does</li>
+    <li><strong>Gradient text</strong> — colour transitions applied to headlines for spectacle without meaning; purely decorative</li>
+    <li><strong>Generic CTAs</strong> — "Get Started" and "Learn More" appear on virtually every AI-generated page; interchangeable across industries</li>
+    <li><strong>Tiny ALL-CAPS label before heading</strong> — "WHY CHOOSE US" directly above the section heading; a layout tic with no user benefit</li>
+    <li><strong>Three-column feature card grid</strong> — the canonical AI layout; appears regardless of whether 3 columns is appropriate</li>
+    <li><strong>Uniform 16px border radius</strong> — applied to every card, button, and container; creates visual monotony</li>
+    <li><strong>Coloured left border on cards</strong> — 3–4px purple/blue stripe; called "almost as reliable a tell as em-dashes are in copy"</li>
+    <li><strong>Glassmorphism + uniform 24px padding</strong> — frosted-glass effect on every card; identical padding eliminates hierarchy</li>
+    <li><strong>Icon floating above heading</strong> — emoji or line-icon placed above the card title, not integrated with content</li>
+  </ol>
+  <div class="legend-note">
+    Plus the unlabelled honourable mentions: generic SaaS copy ("streamline / empower / world-class / cutting-edge"),
+    stats rows with round numbers, testimonials with stock initials-avatars, Inter font throughout (loaded at top of this page).
+    Designers report identifying this constellation in ~0.5 seconds.
+  </div>
+  <a class="compare-link" href="/demos/good-design.html">→ See the well-designed version of the same content</a>
+</div>
+
+</body>
+</html>

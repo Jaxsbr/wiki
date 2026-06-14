@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vector Search — Beyond Cosine: Hybrid Retrieval Techniques</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230a0a0c'/%3E%3Ctext x='8' y='12.5' text-anchor='middle' font-size='12' fill='%23c4a35a'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/wiki/_assets/observatory.css">
+</head>
+<body>
+<div id="scene" aria-hidden="true">
+  <div data-depth="0.05" class="layer nebula"></div>
+  <div data-depth="0.10" class="layer stars" data-stars="160" data-size="1.1"></div>
+  <div data-depth="0.25" class="layer stars" data-stars="70" data-size="1.7"></div>
+  <div data-depth="0.50" class="layer stars" data-stars="26" data-size="2.5"></div>
+</div>
+<canvas id="constellation" aria-hidden="true"></canvas>
+<nav class="crumb">
+  <span class="brand">ver-kyker</span><span class="sep">·</span>
+  <a href="/wiki/">index</a><span class="sep">·</span>
+  <a href="/wiki/requests/">requests</a><span class="sep">·</span>
+  <a href="/wiki/log/">log</a>
+</nav>
+<main id="content"></main>
+<footer class="statsbar">
+  <span class="stat"><span class="stat-label">pages</span><span class="stat-value">18</span></span>
+  <span class="stat"><span class="stat-label">requests</span><span class="stat-value">4</span></span>
+  <span class="stat"><span class="stat-label">last entry</span><span class="stat-value">2026-06-14</span></span>
+  <span class="stat obs">✦ research observatory</span>
+</footer>
+<script src="/wiki/_assets/marked.min.js"></script>
+<script src="/wiki/_assets/parallax.min.js"></script>
+<script>window.__MD__ = "# Vector Search — Beyond Cosine: Hybrid Retrieval Techniques\n\n> Source: InfoQ — Why Vector Search Alone Isn't Enough (Jun 2026, Aaditya Chauhan)\n\n## Why Vector-Only Search Fails\n\nEmbedding models convert text into fixed-dimensional vectors capturing semantic meaning.\nThis is powerful for conceptual similarity, but systematically weak at distinguishing:\n- Specific identifiers (error codes, version numbers, feature flag names)\n- Operations that differ in one keyword (\"enable\" vs \"disable\")\n\nTwo nearly-identical documents produce nearly-identical vectors — ranking between them\nbecomes unreliable noise, not signal.\n\n## Three Query Categories\n\n| Type | Example | Best retriever |\n|---|---|---|\n| **Semantic** | \"protocol when a region goes offline\" | Vector search |\n| **Exact-match (lexical)** | `ERR_PAYMENT_GATEWAY_TIMEOUT` | [BM25](/wiki/concepts/bm25/) |\n| **Hybrid** | \"rollback runbook for v3.2 deployment\" | Both |\n\nProduction query distributions are dominated by the hybrid type — most real queries\ncombine semantic intent with specific tokens that demand exact matching.\n\n## The Production Retrieval Stack\n\n```\nQuery\n  ├─ BM25 retriever  ─────┐\n  └─ Vector retriever ────┤ RRF fusion → top-N candidates → Cross-encoder reranker → top-K → LLM\n```\n\nThree stages, each addressing a distinct gap:\n\n1. **[BM25](/wiki/concepts/bm25/)** — exact/lexical precision via probabilistic keyword scoring\n2. **[RRF](/wiki/concepts/reciprocal-rank-fusion/)** — rank-based fusion of BM25 and vector lists, no score normalisation needed\n3. **[Cross-encoder reranking](/wiki/concepts/cross-encoder-reranking/)** — fine-grained relevance on the small candidate set\n\n## Elasticsearch / OpenSearch Implementation\n\nBoth engines support native hybrid retrieval (Elasticsearch 8.13+). A single query\nruns both retrievers and fuses with RRF server-side — no application-level merging.\n\n**Index mapping:**\n```json\n{\n  \"mappings\": {\n    \"properties\": {\n      \"content\": { \"type\": \"text\", \"analyzer\": \"standard\" },\n      \"content_vector\": { \"type\": \"dense_vector\", \"dims\": 768, \"index\": true, \"similarity\": \"cosine\" }\n    }\n  }\n}\n```\n\n**Hybrid query:**\n```json\n{\n  \"retriever\": {\n    \"rrf\": {\n      \"retrievers\": [\n        { \"standard\": { \"query\": { \"match\": { \"content\": \"\u003cquery>\" } } } },\n        { \"knn\": { \"field\": \"content_vector\", \"query_vector\": [...], \"k\": 50, \"num_candidates\": 100 } }\n      ],\n      \"rank_constant\": 60\n    }\n  }\n}\n```\n\n## Tuning Parameters\n\n| Parameter | Default | Lower → | Higher → |\n|---|---|---|---|\n| `rank_constant` (k in RRF) | 60 | Favour top-ranked hits (precision) | Flatten decay, favour consensus (recall) |\n| `num_candidates` | 100 | Faster, lower recall | Slower, higher recall |\n\n- Lower k (20–30): useful when BM25 hits are highly precise (error codes, version strings)\n- Higher k (80–100): useful when you want documents appearing in both lists to win\n\n## Key Takeaways\n\n- Embeddings are approximation engines — strong on meaning, weak on identity\n- BM25 and vector search have complementary failure modes; neither alone is sufficient\n- RRF fuses the two without requiring score normalisation\n- A cross-encoder reranking stage on 20–50 candidates adds meaningful relevance for the cost of ~100 ms on GPU\n- This layered pattern is convergent across production RAG systems (Perplexity, Glean, etc.)\n\n## See Also\n\n- [BM25](/wiki/concepts/bm25/)\n- [Reciprocal Rank Fusion (RRF)](/wiki/concepts/reciprocal-rank-fusion/)\n- [Cross-Encoder Reranking](/wiki/concepts/cross-encoder-reranking/)\n";</script>
+<script src="/wiki/_assets/observatory.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Indie Game Engines &amp; Frameworks (2020–2026)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230a0a0c'/%3E%3Ctext x='8' y='12.5' text-anchor='middle' font-size='12' fill='%23c4a35a'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/wiki/_assets/observatory.css">
+</head>
+<body>
+<div id="scene" aria-hidden="true">
+  <div data-depth="0.05" class="layer nebula"></div>
+  <div data-depth="0.10" class="layer stars" data-stars="160" data-size="1.1"></div>
+  <div data-depth="0.25" class="layer stars" data-stars="70" data-size="1.7"></div>
+  <div data-depth="0.50" class="layer stars" data-stars="26" data-size="2.5"></div>
+</div>
+<canvas id="constellation" aria-hidden="true"></canvas>
+<nav class="crumb">
+  <span class="brand">ver-kyker</span><span class="sep">·</span>
+  <a href="/wiki/">index</a><span class="sep">·</span>
+  <a href="/wiki/requests/">requests</a><span class="sep">·</span>
+  <a href="/wiki/log/">log</a>
+</nav>
+<main id="content"></main>
+<footer class="statsbar">
+  <span class="stat"><span class="stat-label">pages</span><span class="stat-value">18</span></span>
+  <span class="stat"><span class="stat-label">requests</span><span class="stat-value">4</span></span>
+  <span class="stat"><span class="stat-label">last entry</span><span class="stat-value">2026-06-14</span></span>
+  <span class="stat obs">✦ research observatory</span>
+</footer>
+<script src="/wiki/_assets/marked.min.js"></script>
+<script src="/wiki/_assets/parallax.min.js"></script>
+<script>window.__MD__ = "# Indie Game Engines & Frameworks (2020–2026)\n\nEngine choices made by award-winning indie games, and the market trends reshaping the landscape.\n\n→ Back to: [Indie Game Winning Recipes](/wiki/topics/indie-winning-recipes/)\n\n---\n\n## Engine Usage in Major Winners\n\n| Engine | Notable Award Winners | Notes | Links |\n|---|---|---|---|\n| **Unity** | Sea of Stars, Spiritfarer, Carrion, Toem, Nine Sols, Venba, Chicory, Unpacking, Inscryption | ~55–65% of major indie award winners. Strong 2D tooling, cross-platform. | [unity.com](https://unity.com) |\n| **GameMaker / GMS2** | Loop Hero, Katana ZERO, Undertale (GMS1) | Fast iteration for 2D action and roguelikes. | [gamemaker.io](https://gamemaker.io) |\n| **LÖVE (Lua)** | **Balatro** (2024 TGA winner, 5M+ copies) | Lightweight, fast prototyping. LocalThunk's choice for the year's biggest indie hit. | [love2d.org](https://love2d.org) |\n| **Unreal Engine 4/5** | Stray, Kena: Bridge of Spirits, Clair Obscur: Expedition 33 | Larger indie teams; cinematic visual goals. | [unrealengine.com](https://www.unrealengine.com) |\n| **Godot** | Rising fast (see below) | 2024–2026: major adoption jump after Unity pricing controversy. | [godotengine.org](https://godotengine.org) |\n| **MonoGame / XNA** | Celeste, Stardew Valley (custom XNA) | Legacy but still capable; ConcernedApe built entirely in XNA. | [monogame.net](https://www.monogame.net) |\n| **Custom engines** | Hades (custom C++/Forge + Lua), Terraria (custom C#) | Supergiant chose custom for full control over performance and rendering. | — |\n\n![Hades](https://cdn.akamai.steamstatic.com/steam/apps/1145360/header.jpg) ![Sea of Stars](https://cdn.akamai.steamstatic.com/steam/apps/1244090/header.jpg) ![Stray](https://cdn.akamai.steamstatic.com/steam/apps/1533420/header.jpg)\n\n---\n\n## Godot's Rapid Rise (2023–2026)\n\nThe most significant engine trend in this period — driven primarily by Unity's September 2023 runtime fee announcement.\n\n| Metric | 2023 | 2024 | 2025–26 |\n|---|---|---|---|\n| GMTK Jam submissions | ~19% | **37%** | ~40%+ |\n| Steam titles shipped | 618 | 1,500 | **2,864** |\n| Studio experimentation | ~7% | ~15% | Growing |\n\n**Why Godot is winning jams faster than shipping hits**: there is a ~14-month toolchain lag between \"developers choose Godot\" and \"finished Godot games ship on Steam\". The jam data is a leading indicator of commercial games arriving in 2025–27.\n\n**Godot 4.4 (early 2026)** addressed the primary criticisms:\n- Vulkan renderer (significant performance uplift)\n- Rewritten physics engine\n- C# support stabilised\n- Better 3D workflow\n\n**The Unity pricing shock effect**: Unity's runtime fee announcement caused a measurable one-month spike in Godot interest that became a sustained trend. The indie community's default \"just use Unity\" answer is no longer automatic.\n\n---\n\n## Engine Decision Framework for Indie Developers\n\nBased on what winners have used:\n\n| Goal | Recommended engine |\n|---|---|\n| 2D game, fast iteration, pixel art / action | GameMaker Studio 2 or Godot 4 |\n| 2D or 3D, cross-platform, large ecosystem | Unity (still dominant in shipped winners) |\n| Cinematic 3D, Unreal-native features | Unreal Engine 5 |\n| Tiny scope, jam prototype, solo dev | LÖVE (Lua) or Godot |\n| Full control, performance-critical, experienced team | Custom (risky; Supergiant has 20+ years experience) |\n| 3D open world / metroidvania | Godot 4.4+ is now viable; Unity remains easier |\n\n---\n\n## Key Observations\n\n1. **Engine choice doesn't win awards** — Balatro (LÖVE) and Hades (custom C++) won in the same era as Unity-built games. What matters is the game, not the engine.\n\n2. **Godot is the anti-Unity hedge** — for solo and small teams who want MIT-licensed, no-runtime-fee tools, Godot 4 is now the default recommendation. The award winners haven't yet caught up (most current winners started before 2023), but jam data predicts this will change by 2026–27.\n\n3. **Unreal = cinematic ambition** — Stray, Kena, and Clair Obscur all used Unreal to achieve visual quality that wouldn't be feasible in Unity without significant custom shader work.\n\n4. **Custom engines = creative control + enormous investment** — Supergiant has built a custom pipeline over 15 years. Not a rational first-project choice. Hades and Pyre look different because the renderer is different, not because Unity can't do it.\n\n5. **GameMaker revival**: despite not being the trendy choice, GameMaker remains a serious option for 2D games. Undertale's cultural footprint still draws developers to it. Loop Hero's success demonstrated it can still produce award-winning work.\n\n---\n\n## See Also\n- [Indie Winning Recipes](/wiki/topics/indie-winning-recipes/)\n- [Indie Game Contests](/wiki/topics/indie-game-contests/)\n- [Indie Contest Winners by Year](/wiki/topics/indie-contest-winners/)\n";</script>
+<script src="/wiki/_assets/observatory.js"></script>
+</body>
+</html>

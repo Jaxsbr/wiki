@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SyncFlow — Well-Designed Version</title>
+  <!-- Fraunces: editorial variable serif — personality without effort -->
+  <!-- IBM Plex Sans: technical clarity, neutral but not generic -->
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ─── DEMO CHROME ───────────────────────────────────────── */
+    body { margin: 0; padding-top: 48px; }
+
+    .demo-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 48px;
+      background: #1c1409; border-bottom: 2px solid #d97706;
+      display: flex; align-items: center; gap: 16px; padding: 0 20px;
+      z-index: 9999; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #fef3c7;
+    }
+    .demo-bar strong { color: #fbbf24; }
+    .demo-bar a { color: #93c5fd; text-decoration: none; margin-left: auto; }
+    .demo-bar a:hover { text-decoration: underline; }
+
+    /* ─── GOOD DESIGN STYLES ────────────────────────────────── */
+
+    /* Light mode, warm palette — deliberate departure from dark default */
+    * { box-sizing: border-box; }
+    .page {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: #fafaf7;
+      color: #1c1409;
+    }
+
+    /* Navigation */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 64px; border-bottom: 1px solid #e7e2d8;
+      background: #fafaf7;
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;
+      color: #1c1409; letter-spacing: -0.02em;
+    }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { font-size: 14px; color: #6b5e4e; text-decoration: none; font-weight: 400; }
+    .nav-links a:hover { color: #1c1409; }
+    .nav-cta {
+      background: #1c1409; color: #fef3c7;
+      padding: 9px 22px; font-size: 14px; font-weight: 500;
+      border: none; cursor: pointer;
+      /* Deliberate: sharp corners, not rounded pill */
+    }
+
+    /* Hero — asymmetric, left-aligned, content-specific */
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: 520px; align-items: center;
+    }
+    .hero-text {
+      padding: 80px 64px 80px 64px;
+    }
+    /* No badge above headline. No vague claim. */
+    .hero-eyebrow {
+      font-size: 13px; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #9c7c4a;
+      margin-bottom: 20px;
+    }
+    /* Fraunces headline — personality, size contrast, no gradient */
+    .hero-text h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 58px; font-weight: 800; line-height: 1.05;
+      color: #1c1409; margin: 0 0 24px; letter-spacing: -0.03em;
+    }
+    .hero-text h1 em {
+      font-style: italic; font-weight: 300; color: #9c7c4a;
+    }
+    .hero-text p {
+      font-size: 17px; color: #5c4e3e; line-height: 1.65;
+      margin: 0 0 36px; max-width: 420px; font-weight: 300;
+    }
+    /* CTA: specific language, not "Get Started" */
+    .hero-cta {
+      display: flex; gap: 16px; align-items: center;
+    }
+    .btn-main {
+      background: #d97706; color: #fff; padding: 13px 28px;
+      font-size: 15px; font-weight: 500; border: none; cursor: pointer;
+      font-family: 'IBM Plex Sans', sans-serif;
+      /* No rounded corners on the primary — deliberate */
+    }
+    .btn-main:hover { background: #b45309; }
+    .hero-sub {
+      font-size: 13px; color: #9c7c4a;
+      font-style: italic; font-weight: 300;
+    }
+
+    /* Hero visual — simple, abstract, not orbs */
+    .hero-visual {
+      background: #1c1409;
+      height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px;
+      /* A single, purposeful visual — not floating orbs */
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px;
+      width: 100%;
+    }
+    .hero-grid-cell {
+      height: 48px;
+      background: #2d2218;
+    }
+    .hero-grid-cell.lit { background: #d97706; }
+    .hero-grid-cell.dim { background: #4a3526; }
+
+    /* Features — staggered, not identical 3-col */
+    .features {
+      padding: 100px 64px;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .features-intro {
+      display: grid; grid-template-columns: 1fr 2fr; gap: 64px;
+      margin-bottom: 80px; align-items: start;
+    }
+    .features-label {
+      font-family: 'Fraunces', serif; font-size: 48px; font-weight: 700;
+      line-height: 1; color: #1c1409; letter-spacing: -0.03em;
+    }
+    .features-label em { font-style: italic; font-weight: 300; color: #9c7c4a; }
+    .features-desc { font-size: 16px; color: #5c4e3e; line-height: 1.7; font-weight: 300; padding-top: 8px; }
+
+    /* Feature list — horizontal bands, not cards */
+    .feature-item {
+      display: grid; grid-template-columns: 80px 1fr auto;
+      gap: 32px; align-items: center;
+      padding: 28px 0; border-top: 1px solid #e7e2d8;
+    }
+    .feature-item:last-child { border-bottom: 1px solid #e7e2d8; }
+    .feature-num {
+      font-family: 'Fraunces', serif; font-size: 48px; font-weight: 800;
+      color: #e7e2d8; letter-spacing: -0.04em; line-height: 1;
+    }
+    .feature-name {
+      font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600;
+      color: #1c1409; margin-bottom: 6px;
+    }
+    .feature-desc { font-size: 14px; color: #7a6a58; line-height: 1.6; font-weight: 300; }
+    .feature-tag {
+      font-size: 12px; font-weight: 500; background: #f5f0e8;
+      color: #9c7c4a; padding: 5px 12px; white-space: nowrap;
+    }
+
+    /* Testimonial — single, prominent, specific */
+    .pull-quote {
+      background: #1c1409; padding: 80px 64px;
+    }
+    .pull-quote blockquote {
+      font-family: 'Fraunces', serif; font-size: 32px; font-weight: 300;
+      font-style: italic; color: #fef3c7; line-height: 1.4;
+      margin: 0 0 32px; max-width: 800px;
+    }
+    .pull-quote blockquote strong { font-weight: 700; font-style: normal; color: #fbbf24; }
+    .pull-quote cite {
+      font-size: 14px; color: #a8956e; font-style: normal;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    /* Footer CTA — not a repeated hero */
+    .footer-section {
+      padding: 80px 64px;
+      border-top: 1px solid #e7e2d8;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-left h2 {
+      font-family: 'Fraunces', serif; font-size: 36px; font-weight: 700;
+      color: #1c1409; margin: 0 0 8px; letter-spacing: -0.02em;
+    }
+    .footer-left p { font-size: 15px; color: #7a6a58; margin: 0; font-weight: 300; }
+
+    /* ─── NOTES ─────────────────────────────────────────────── */
+    .design-notes {
+      background: #f0ebe2; border-top: 3px solid #d97706;
+      padding: 60px 64px;
+    }
+    .design-notes h2 {
+      font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;
+      color: #1c1409; margin: 0 0 28px;
+    }
+    .notes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px 48px; }
+    .note { font-size: 14px; color: #5c4e3e; line-height: 1.7; }
+    .note strong { color: #1c1409; display: block; margin-bottom: 4px; font-weight: 600; }
+    .compare-link {
+      display: inline-block; margin-top: 28px;
+      background: #1c1409; color: #fef3c7;
+      padding: 10px 22px; text-decoration: none;
+      font-weight: 500; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .compare-link:hover { background: #2d1f10; }
+  </style>
+</head>
+<body>
+
+<div class="demo-bar">
+  <strong>✦ WELL-DESIGNED VERSION</strong>
+  <span>Same content, different constraints. See the design notes at the bottom.</span>
+  <a href="/demos/ai-slop.html">← Back to AI-Slop Annotated Demo</a>
+</div>
+
+<div class="page">
+
+  <nav>
+    <div class="nav-logo">SyncFlow</div>
+    <div class="nav-links">
+      <a href="#">Product</a>
+      <a href="#">Pricing</a>
+      <a href="#">Docs</a>
+      <a href="#">Blog</a>
+    </div>
+    <button class="nav-cta">Book a demo</button>
+  </nav>
+
+  <!-- Hero: left-aligned, specific copy, no gradient, no orbs -->
+  <section class="hero">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Workflow intelligence</div>
+      <h1>Stop losing work<br>to <em>handoffs</em></h1>
+      <p>SyncFlow tracks every task, decision, and deadline across your tools — so nothing falls through the gap between Slack and Jira and that spreadsheet someone's still maintaining.</p>
+      <div class="hero-cta">
+        <button class="btn-main">Start a free team trial</button>
+        <span class="hero-sub">No card required. 14 days.</span>
+      </div>
+    </div>
+    <!-- Abstract visual: a grid pattern, not floating orbs -->
+    <div class="hero-visual">
+      <div class="hero-grid" id="heroGrid"></div>
+    </div>
+  </section>
+
+  <!-- Features: horizontal bands, numbered, not 3-col cards -->
+  <section class="features">
+    <div class="features-intro">
+      <div class="features-label">What<br>it <em>does</em></div>
+      <div class="features-desc">
+        SyncFlow sits between your existing tools rather than replacing them.
+        It reads context, flags gaps, and keeps the right people informed without
+        requiring you to maintain a separate source of truth.
+      </div>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-num">01</div>
+      <div>
+        <div class="feature-name">Automatic context capture</div>
+        <div class="feature-desc">Connects to Slack, Linear, GitHub, and Notion. Reads thread context so you don't have to re-explain what happened in standup.</div>
+      </div>
+      <div class="feature-tag">Live sync</div>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-num">02</div>
+      <div>
+        <div class="feature-name">Handoff gap detection</div>
+        <div class="feature-desc">Flags tasks that have fallen silent for too long, or decisions that were made in one channel but never landed in the tracker.</div>
+      </div>
+      <div class="feature-tag">AI-assisted</div>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-num">03</div>
+      <div>
+        <div class="feature-name">Weekly team digest</div>
+        <div class="feature-desc">One email, every Monday. What shipped, what's blocked, and who needs to talk to whom. Written, not a dashboard link.</div>
+      </div>
+      <div class="feature-tag">No dashboard needed</div>
+    </div>
+  </section>
+
+  <!-- Single strong testimonial, not a grid of stock quotes -->
+  <div class="pull-quote">
+    <blockquote>"We had three separate tools telling us a feature was done. SyncFlow was the first thing that told us <strong>the QA sign-off never actually happened</strong>."</blockquote>
+    <cite>Priya Nair — Engineering Lead, Volta Labs</cite>
+  </div>
+
+  <!-- Footer CTA: not a repeat of the hero -->
+  <div class="footer-section">
+    <div class="footer-left">
+      <h2>Try it with your actual team</h2>
+      <p>Set up takes 12 minutes. We connect to your tools; you don't migrate anything.</p>
+    </div>
+    <button class="btn-main" style="padding:16px 36px;font-size:16px">Start free trial</button>
+  </div>
+
+</div><!-- /page -->
+
+<!-- Design notes -->
+<div class="design-notes">
+  <h2>What changed — and why</h2>
+  <div class="notes-grid">
+    <div class="note">
+      <strong>Typography: Fraunces + IBM Plex Sans instead of Inter</strong>
+      Fraunces is an optical-size variable serif with personality — warm, editorial, immediately distinctive. IBM Plex Sans is neutral enough to stay out of the way. No gradient text, no all-caps labels before every heading.
+    </div>
+    <div class="note">
+      <strong>Colour: warm cream/ink/amber instead of dark + purple gradient</strong>
+      A deliberate light mode (rare among AI-generated sites). One accent colour (#d97706) applied with purpose — CTAs and emphasis only. No "VibeCode Purple".
+    </div>
+    <div class="note">
+      <strong>Hero: left-aligned, specific copy, no orbs</strong>
+      "Stop losing work to handoffs" is a specific claim about a real pain. Compare to "Build the Future — Without Limits". The hero visual is a structured grid pattern, not blurred decorative blobs.
+    </div>
+    <div class="note">
+      <strong>Features: numbered horizontal bands instead of 3-col card grid</strong>
+      Same information, completely different layout. No coloured left border, no glassmorphism, no floating icon above heading. The numbers create hierarchy without adding visual clutter.
+    </div>
+    <div class="note">
+      <strong>Testimonial: one specific quote instead of a grid</strong>
+      The testimonial names a specific, surprising thing that happened ("the QA sign-off never actually happened"). Generic praise ("it's a game-changer") doesn't build trust. Specificity does.
+    </div>
+    <div class="note">
+      <strong>Border radius: deliberate variation, not uniform 16px</strong>
+      Nav CTA has no border radius (sharp, authoritative). Feature tags have none. The primary button has none. Rounded corners appear only on supporting elements. The inconsistency is intentional — it creates visual rhythm.
+    </div>
+  </div>
+  <a class="compare-link" href="/demos/ai-slop.html">← See the AI-slop version with all 13 tells annotated</a>
+</div>
+
+<script>
+  // Populate the hero grid with a pattern — purposeful, not random
+  const grid = document.getElementById('heroGrid');
+  const pattern = [
+    1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1,
+    1,1,0,0, 0,1,1,0, 0,0,1,1, 0,0,0,1,
+    1,1,1,0, 0,1,1,1, 1,0,1,1, 1,0,0,1,
+    1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
+    1,1,1,0, 0,1,1,1, 1,0,1,1, 1,0,0,1,
+    1,1,0,0, 0,1,1,0, 0,0,1,1, 0,0,0,1,
+  ];
+  pattern.forEach((val, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'hero-grid-cell' + (val === 1 ? ' lit' : (i % 5 === 0 ? ' dim' : ''));
+    grid.appendChild(cell);
+  });
+</script>
+
+</body>
+</html>

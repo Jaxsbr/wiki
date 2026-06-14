@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Encoder Reranking</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230a0a0c'/%3E%3Ctext x='8' y='12.5' text-anchor='middle' font-size='12' fill='%23c4a35a'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/wiki/_assets/observatory.css">
+</head>
+<body>
+<div id="scene" aria-hidden="true">
+  <div data-depth="0.05" class="layer nebula"></div>
+  <div data-depth="0.10" class="layer stars" data-stars="160" data-size="1.1"></div>
+  <div data-depth="0.25" class="layer stars" data-stars="70" data-size="1.7"></div>
+  <div data-depth="0.50" class="layer stars" data-stars="26" data-size="2.5"></div>
+</div>
+<canvas id="constellation" aria-hidden="true"></canvas>
+<nav class="crumb">
+  <span class="brand">ver-kyker</span><span class="sep">·</span>
+  <a href="/wiki/">index</a><span class="sep">·</span>
+  <a href="/wiki/requests/">requests</a><span class="sep">·</span>
+  <a href="/wiki/log/">log</a>
+</nav>
+<main id="content"></main>
+<footer class="statsbar">
+  <span class="stat"><span class="stat-label">pages</span><span class="stat-value">18</span></span>
+  <span class="stat"><span class="stat-label">requests</span><span class="stat-value">4</span></span>
+  <span class="stat"><span class="stat-label">last entry</span><span class="stat-value">2026-06-14</span></span>
+  <span class="stat obs">✦ research observatory</span>
+</footer>
+<script src="/wiki/_assets/marked.min.js"></script>
+<script src="/wiki/_assets/parallax.min.js"></script>
+<script>window.__MD__ = "# Cross-Encoder Reranking\n\nA reranking stage applied *after* first-stage retrieval ([BM25](/wiki/concepts/bm25/) + vector + [RRF](/wiki/concepts/reciprocal-rank-fusion/))\nto improve final relevance on a small candidate set.\n\n## How It Differs from Bi-Encoders\n\n| | Bi-encoder (standard embeddings) | Cross-encoder |\n|---|---|---|\n| Query & document | Encoded **independently** | Encoded **jointly** in one forward pass |\n| Token interaction | None — only via cosine distance | Full token-level attention between query and document |\n| Speed | Fast — pre-compute document vectors | Slow — one forward pass per query-document pair |\n| Relevance quality | Lower | Consistently higher |\n\nBecause cross-encoders process the query-document pair together, they can model nuanced\nrelationships that independently encoded vectors cannot capture (e.g., \"rollback\" vs \"rollout\"\nin context).\n\n## Practical Pattern\n\n1. [RRF](/wiki/concepts/reciprocal-rank-fusion/) retrieves **20–50 candidates**\n2. Pass all candidates to cross-encoder for scoring\n3. Re-sort by cross-encoder score → final top-K → LLM\n\n## Latency\n\nCross-encoders are too slow for first-stage retrieval (full corpus × every query is infeasible),\nbut re-ranking 20–50 candidates typically takes **\u003c 100 ms on GPU** — acceptable for most\nproduction latencies.\n\n## Model\n\nA common lightweight choice: `ms-marco-MiniLM-L-6-v2`\n- Trained on MS MARCO passage ranking\n- Even small models provide meaningful in-domain gains\n- Larger models show the largest gains on out-of-domain queries\n\n## When to Add This Stage\n\nWorth the investment when:\n- Per-percentage-point relevance improvements matter (enterprise search, high-stakes RAG)\n- Candidate set after RRF is ≤ 50 documents\n- A GPU is available (CPU inference is feasible but slower)\n\nCross-encoders consistently outperform bi-encoders on standard benchmarks (BEIR) and\nrepresent the standard third stage in production retrieval stacks.\n\n## See Also\n\n- [Reciprocal Rank Fusion](/wiki/concepts/reciprocal-rank-fusion/)\n- [BM25](/wiki/concepts/bm25/)\n- [Vector Search — Hybrid Retrieval](/wiki/topics/vector-search-hybrid-retrieval/)\n";</script>
+<script src="/wiki/_assets/observatory.js"></script>
+</body>
+</html>
