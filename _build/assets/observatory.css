@@ -1,0 +1,227 @@
+/* ver-kyker research observatory — editorial dark theme.
+   Palette borrowed from the pretext demos: ink #0a0a0c, warm paper #e8e4dc,
+   brass gold #c4a35a. Background depth via parallax.js star layers. */
+
+* { box-sizing: border-box; }
+
+html {
+  background: radial-gradient(ellipse at 50% 28%, #12121c 0%, #0a0a0e 55%, #07070a 100%) fixed;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: #e8e4dc;
+  font: 17px/1.7 "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+}
+
+/* ── background scene ─────────────────────────────────────────── */
+
+#scene {
+  position: fixed;
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.layer { width: 100%; height: 100%; }
+
+.layer.nebula {
+  background-image:
+    radial-gradient(38rem 26rem at 22% 30%, rgba(196, 163, 90, 0.10), transparent 65%),
+    radial-gradient(46rem 32rem at 78% 70%, rgba(90, 110, 196, 0.10), transparent 65%),
+    radial-gradient(28rem 22rem at 62% 18%, rgba(150, 90, 160, 0.07), transparent 65%),
+    radial-gradient(30rem 30rem at 38% 85%, rgba(196, 163, 90, 0.05), transparent 65%);
+  animation: nebula-breathe 18s ease-in-out infinite alternate;
+}
+
+@keyframes nebula-breathe {
+  from { opacity: 0.75; }
+  to   { opacity: 1; }
+}
+
+#constellation {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* ── chrome ────────────────────────────────────────────────────── */
+
+.crumb {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: rgba(8, 8, 12, 0.55);
+  border: 1px solid rgba(196, 163, 90, 0.16);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font: 400 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.crumb .brand { color: #c4a35a; font-weight: 600; }
+.crumb .sep { color: rgba(232, 228, 220, 0.25); }
+.crumb a { color: rgba(232, 228, 220, 0.7); text-decoration: none; }
+.crumb a:hover { color: #c4a35a; }
+
+.statsbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  background: rgba(6, 6, 10, 0.78);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font: 400 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.stat { display: flex; gap: 6px; align-items: baseline; }
+.stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.stat-value { color: rgba(232, 228, 220, 0.75); font-weight: 600; }
+.stat.obs { color: rgba(196, 163, 90, 0.45); letter-spacing: 1.5px; text-transform: uppercase; font-size: 10px; }
+
+/* ── content card ──────────────────────────────────────────────── */
+
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 46rem;
+  margin: 6.5rem auto 7.5rem;
+  padding: 3rem 3.4rem 3.4rem;
+  background: rgba(12, 12, 18, 0.62);
+  border: 1px solid rgba(196, 163, 90, 0.14);
+  border-radius: 16px;
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── editorial typography ──────────────────────────────────────── */
+
+h1 {
+  margin: 0 0 1.4rem;
+  font-size: 2.15rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid rgba(196, 163, 90, 0.28);
+}
+
+h2 {
+  margin: 2.4rem 0 0.8rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #d9cdb4;
+  letter-spacing: -0.2px;
+}
+
+h2::before { content: "✦ "; color: rgba(196, 163, 90, 0.55); font-size: 0.8em; }
+
+h3 { margin: 1.8rem 0 0.6rem; font-size: 1.1rem; color: #cfc6b2; }
+
+p { margin: 0 0 1rem; }
+
+main > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.3em;
+  line-height: 0.82;
+  padding: 0.06em 0.1em 0 0;
+  font-weight: 700;
+  color: #c4a35a;
+}
+
+a { color: #c4a35a; text-decoration-color: rgba(196, 163, 90, 0.35); text-underline-offset: 3px; }
+a:hover { text-decoration-color: #c4a35a; }
+
+strong { color: #f3efe6; }
+
+blockquote {
+  margin: 1.4rem 0;
+  padding: 0.2rem 0 0.2rem 1.1rem;
+  border-left: 3px solid #6b5a3d;
+  font-style: italic;
+  color: #b8a070;
+}
+
+ul, ol { padding-left: 1.4rem; }
+li { margin-bottom: 0.35rem; }
+li::marker { color: rgba(196, 163, 90, 0.6); }
+
+code {
+  font: 0.82em/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+  background: rgba(196, 163, 90, 0.09);
+  border: 1px solid rgba(196, 163, 90, 0.12);
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+  color: #e2d9c4;
+}
+
+pre {
+  margin: 1.2rem 0;
+  padding: 0.9rem 1.1rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+pre code { background: none; border: none; padding: 0; color: #d8d4ca; }
+
+table { border-collapse: collapse; margin: 1.2rem 0; width: 100%; }
+th {
+  font: 600 10px/1.4 "Helvetica Neue", Helvetica, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #c4a35a;
+  text-align: left;
+}
+th, td { border: 1px solid rgba(196, 163, 90, 0.18); padding: 0.45rem 0.7rem; }
+
+img { max-width: 100%; border-radius: 10px; }
+
+hr { border: none; margin: 2.2rem 0; text-align: center; }
+hr::after { content: "✦ ✦ ✦"; color: rgba(196, 163, 90, 0.4); letter-spacing: 1em; font-size: 0.8rem; }
+
+::selection { background: rgba(196, 163, 90, 0.3); }
+
+/* ── small screens / accessibility ─────────────────────────────── */
+
+@media (max-width: 760px) {
+  main { margin: 5.5rem 0.8rem 6.5rem; padding: 1.8rem 1.4rem; }
+  .statsbar { gap: 16px; }
+  .stat.obs { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main, .layer.nebula { animation: none; }
+}
