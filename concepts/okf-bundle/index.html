@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OKF Bundle</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230a0a0c'/%3E%3Ctext x='8' y='12.5' text-anchor='middle' font-size='12' fill='%23c4a35a'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/wiki/_assets/observatory.css">
+</head>
+<body>
+<div id="scene" aria-hidden="true">
+  <div data-depth="0.05" class="layer nebula"></div>
+  <div data-depth="0.10" class="layer stars" data-stars="160" data-size="1.1"></div>
+  <div data-depth="0.25" class="layer stars" data-stars="70" data-size="1.7"></div>
+  <div data-depth="0.50" class="layer stars" data-stars="26" data-size="2.5"></div>
+</div>
+<canvas id="constellation" aria-hidden="true"></canvas>
+<nav class="crumb">
+  <span class="brand">ver-kyker</span><span class="sep">·</span>
+  <a href="/wiki/">index</a><span class="sep">·</span>
+  <a href="/wiki/requests/">requests</a><span class="sep">·</span>
+  <a href="/wiki/log/">log</a>
+</nav>
+<main id="content"></main>
+<footer class="statsbar">
+  <span class="stat"><span class="stat-label">pages</span><span class="stat-value">66</span></span>
+  <span class="stat"><span class="stat-label">requests</span><span class="stat-value">11</span></span>
+  <span class="stat"><span class="stat-label">last entry</span><span class="stat-value">2026-07-04</span></span>
+  <span class="stat obs">✦ research observatory</span>
+</footer>
+<script src="/wiki/_assets/marked.min.js"></script>
+<script src="/wiki/_assets/parallax.min.js"></script>
+<script>window.__MD__ = "# OKF Bundle\n\n> The unit of knowledge in the [Open Knowledge Format](/wiki/topics/open-knowledge-format/). A self-contained directory of markdown concept files with YAML frontmatter. Designed to be produced by anyone and consumed by any agent without translation.\n\n## Anatomy\n\n```\n\u003cbundle-root>/\n├── index.md              # (optional) catalog of all concepts in this bundle\n├── log.md                # (optional) append-only change history\n└── \u003cdomain>/\n    ├── \u003cconcept>.md      # one file per concept\n    └── \u003csub-domain>/\n        └── \u003cconcept>.md\n```\n\nThe **file path** is the concept's identity. Rename the file = change the concept's id. There is no separate id field.\n\n## Concept file structure\n\nEvery concept file has two parts:\n\n**YAML frontmatter** — structured fields, queryable without parsing the body:\n\n```yaml\n---\ntype: table          # REQUIRED — the only required field\ntitle: Orders\ndescription: One row per completed order.\nresource: https://bigquery.../orders\ntags: [sales, core]\ntimestamp: 2026-05-28T14:30:00Z\n---\n```\n\n**Markdown body** — all prose, tables, schemas, runbook steps, anything that needs to be communicated. Free-form; the spec imposes no structure on the body.\n\n## Cross-linking\n\nConcepts link to each other using **standard relative markdown links**:\n\n```markdown\nFK to [customers](/tables/customers.md).\n```\n\nThis turns the directory into a **graph** — relationships richer than the parent/child hierarchy of the file system. An agent (or human) can follow links to navigate context without loading the entire bundle.\n\nCross-bundle links use `resource:` URLs pointing to external resources (web URLs, BigQuery URLs, API endpoints). There is no bundle-level namespace resolution in v0.1 — cross-bundle linking is by URL, not by relative path.\n\n## Reserved filenames\n\nTwo filenames have special meaning in OKF:\n\n| File | Role |\n|---|---|\n| `index.md` | Catalog/table-of-contents for agents navigating a directory. Agents are expected to read this first before drilling into individual concept files. |\n| `log.md` | Append-only chronological record of changes to the bundle. Same pattern as the [LLM Wiki pattern](/wiki/topics/llm-wiki-pattern/) log. |\n\nBoth are **optional** — a bundle without them is still conformant. But both are strongly recommended for bundles that grow over time and are consumed by LLM agents (the index is how the agent orients without loading every file; the log is how it understands what changed recently).\n\n## What makes a conformant bundle\n\nOKF v0.1 conformance requires:\n1. Every concept file has a `type` field in its YAML frontmatter\n2. Cross-links use standard markdown link syntax\n3. The `index.md` and `log.md` filenames are used only for their reserved purposes (not as arbitrary concept files)\n\nNothing else is required. The bundle can be:\n- A single flat directory of files\n- A deeply nested hierarchy\n- Committed to a git repo\n- Shipped as a tarball\n- Mounted on any filesystem\n- Hosted in any S3-compatible bucket\n\n## Producer/consumer contract\n\nThe bundle is the contract. Producers decide:\n- What `type` values to use\n- What additional frontmatter fields to include\n- How to structure the body\n- What directory hierarchy makes sense for their domain\n\nConsumers handle:\n- Whatever `type` values they encounter (or ignore ones they don't understand)\n- Arbitrary bodies (they read markdown)\n- Any directory depth\n- Missing optional fields\n\nThis **decouples producer velocity from consumer compatibility.** A metadata export pipeline can add new fields without breaking the agent consuming the bundle. An agent can query bundles from five different teams without a per-team integration.\n\n## See also\n\n- [open-knowledge-format](/wiki/topics/open-knowledge-format/) — the full spec and design principles\n- [multi-product-wiki-architecture](/wiki/topics/multi-product-wiki-architecture/) — how to federate multiple bundles across products\n- [llm-wiki-pattern](/wiki/topics/llm-wiki-pattern/) — the foundational pattern OKF formalizes\n\n## Sources\n\n- sources/okf-google-cloud-blog.html\n";</script>
+<script src="/wiki/_assets/observatory.js"></script>
+</body>
+</html>
