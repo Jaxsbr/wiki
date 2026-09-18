@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indie Game Art Styles — ver-kyker wiki</title>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --border: #2e2e3e;
+    --text: #e8e8f0;
+    --muted: #8888a8;
+    --pixel: #4ade80;
+    --handdrawn: #fb923c;
+    --stylized3d: #60a5fa;
+    --hybrid: #c084fc;
+    --voxel: #f9a8d4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+  }
+
+  .header {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 56px 24px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-style: italic;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-style: normal;
+  }
+  .breadcrumb a { color: var(--muted); text-decoration: underline; }
+
+  nav.toc {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 24px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  nav.toc a {
+    font-size: 0.8rem;
+    font-family: monospace;
+    padding: 4px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 1px solid;
+  }
+
+  nav.toc a.px  { color: var(--pixel); border-color: var(--pixel); }
+  nav.toc a.hd  { color: var(--handdrawn); border-color: var(--handdrawn); }
+  nav.toc a.s3  { color: var(--stylized3d); border-color: var(--stylized3d); }
+  nav.toc a.hy  { color: var(--hybrid); border-color: var(--hybrid); }
+  nav.toc a.vx  { color: var(--voxel); border-color: var(--voxel); }
+
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    font-family: monospace;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .tag.px  { background: #052812; color: var(--pixel); }
+  .tag.hd  { background: #180a02; color: var(--handdrawn); }
+  .tag.s3  { background: #020b18; color: var(--stylized3d); }
+  .tag.hy  { background: #0e0118; color: var(--hybrid); }
+  .tag.vx  { background: #180010; color: var(--voxel); }
+
+  .section-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 28px;
+    max-width: 680px;
+  }
+
+  .pattern-note {
+    font-size: 0.85rem;
+    padding: 12px 16px;
+    border-left: 3px solid;
+    background: var(--surface);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 28px;
+  }
+
+  .pattern-note.px  { border-color: var(--pixel); }
+  .pattern-note.hd  { border-color: var(--handdrawn); }
+  .pattern-note.s3  { border-color: var(--stylized3d); }
+  .pattern-note.hy  { border-color: var(--hybrid); }
+  .pattern-note.vx  { border-color: var(--voxel); }
+
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .game-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .game-card img {
+    width: 100%;
+    aspect-ratio: 460/215;
+    object-fit: cover;
+    display: block;
+    background: #111;
+  }
+
+  .game-card .info {
+    padding: 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .game-card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .game-card .dev {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .game-card .art-note {
+    font-size: 0.78rem;
+    color: var(--text);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  .game-card .award {
+    font-size: 0.72rem;
+    font-family: monospace;
+    color: #f59e0b;
+    margin-top: 2px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .btn {
+    font-size: 0.73rem;
+    font-family: monospace;
+    padding: 5px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    flex: 1;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-steam {
+    background: #1b2838;
+    color: #c7d5e0;
+    border: 1px solid #1b2838;
+  }
+  .btn-steam:hover { background: #2a475e; }
+
+  .btn-trailer {
+    background: transparent;
+    color: #ff4444;
+    border: 1px solid #ff4444;
+  }
+  .btn-trailer:hover { background: #1a0000; }
+
+  .findings {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+
+  .findings h2 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  .findings ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .findings li {
+    font-size: 0.87rem;
+    padding-left: 18px;
+    position: relative;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .findings li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  .footer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="breadcrumb">
+    <a href="/">wiki</a> / <a href="/topics/indie-game-contests.md">indie game contests</a> / art styles
+  </div>
+  <h1>Indie Game Art Styles</h1>
+  <p>Visual survey of award-winning visual approaches, 2020–2025. Five categories, 17 games, annotated with what made each art direction distinct enough to win.</p>
+</div>
+
+<nav class="toc">
+  <a href="#pixel" class="px">Pixel Art</a>
+  <a href="#handdrawn" class="hd">Hand-drawn 2D</a>
+  <a href="#stylized3d" class="s3">Stylized 3D</a>
+  <a href="#hybrid" class="hy">Hybrid / Mixed Media</a>
+  <a href="#voxel" class="vx">Voxel / Abstract</a>
+</nav>
+
+<!-- PIXEL ART -->
+<section class="section" id="pixel">
+  <div class="section-header">
+    <h2>Pixel Art</h2>
+    <span class="tag px">dominant category</span>
+  </div>
+  <p class="section-desc">The most common art direction in indie winners — but winning pixel art is never generic. The differentiator is restraint and specificity of palette, not resolution.</p>
+  <div class="pattern-note px">
+    Award judges ask: "could I identify this game from a single screenshot?" Winners use pixel art as a <em>voice</em>, not just a cost-saving measure. UFO 50 used it to simulate five decades of fake game history. Caves of Qud uses it to signal ASCII heritage.
+  </div>
+  <div class="game-grid">
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1147860/header.jpg" alt="UFO 50 header" loading="lazy">
+      <div class="info">
+        <h3>UFO 50</h3>
+        <div class="dev">Mossmouth — 8-person team — 2024</div>
+        <div class="art-note">50 games, each simulating a different faux-retro system palette and constraint. Pixel art as historical fiction — each title looks like a different decade.</div>
+        <div class="award">★ IGF Excellence in Visual Art 2025 nominee</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1147860/UFO_50/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=UFO+50+trailer+official" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/333640/header.jpg" alt="Caves of Qud header" loading="lazy">
+      <div class="info">
+        <h3>Caves of Qud</h3>
+        <div class="dev">Freehold Games — 2-person team — 12 years development</div>
+        <div class="art-note">ASCII heritage preserved in tileset. The pixel art signals lineage: this game knows it descends from Nethack. The retro aesthetic isn't a limitation — it's identity.</div>
+        <div class="award">★ IGF Grand Prize 2025</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/333640/Caves_of_Qud/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Caves+of+Qud+trailer+2024" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1244090/header.jpg" alt="Sea of Stars header" loading="lazy">
+      <div class="info">
+        <h3>Sea of Stars</h3>
+        <div class="dev">Sabotage Studio — ~13 people — 2023</div>
+        <div class="art-note">SNES-era JRPG aesthetic pushed to modern fidelity limits. Pixel art with modern lighting and parallax depth. Visual homage executed with higher craft than its references.</div>
+        <div class="award">★ BAFTA Best Debut Dev 2024, TGA Best Indie nominee</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1244090/Sea_of_Stars/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Sea+of+Stars+official+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/2379780/header.jpg" alt="Balatro header" loading="lazy">
+      <div class="info">
+        <h3>Balatro</h3>
+        <div class="dev">LocalThunk — solo developer — 2024</div>
+        <div class="art-note">Playing card iconography with pixel-adjacent flat design. The visual language borrows casino aesthetics — green felt, card suits — and subverts them through corrupted Joker imagery. Immediately readable from a screenshot.</div>
+        <div class="award">★ TGA Best Indie + BAFTA Best Game 2025. 5M+ copies.</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/2379780/Balatro/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Balatro+official+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HAND-DRAWN 2D -->
+<section class="section" id="handdrawn">
+  <div class="section-header">
+    <h2>Hand-drawn / Illustrated 2D</h2>
+    <span class="tag hd">Visual Art award favourite</span>
+  </div>
+  <p class="section-desc">Wins Excellence in Visual Art more than any other category. The common thread: craft you can feel — brush strokes, frame-by-frame animation, textures that carry the warmth of a human hand.</p>
+  <div class="pattern-note hd">
+    Judges respond to the evidence of care. Spiritfarer's fluid death animations show more empathy than any dialogue line. Nine Sols's brush-stroke cutscenes signal cultural specificity before a word is read.
+  </div>
+  <div class="game-grid">
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/972660/header.jpg" alt="Spiritfarer header" loading="lazy">
+      <div class="info">
+        <h3>Spiritfarer</h3>
+        <div class="dev">Thunder Lotus Games — ~17 people — 2020</div>
+        <div class="art-note">Fluid cel animation, Ghibli-adjacent warmth. Characters move like cartoons from a different decade — loose, expressive, full of secondary motion. Death animations are the game's most technically impressive feat.</div>
+        <div class="award">★ TGA Best Indie 2020, multiple art nominations</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/972660/Spiritfarer_Farewell_Edition/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Spiritfarer+official+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1809540/header.jpg" alt="Nine Sols header" loading="lazy">
+      <div class="info">
+        <h3>Nine Sols</h3>
+        <div class="dev">Red Candle Games — ~12 people — 2024</div>
+        <div class="art-note">Ink-brush Taopunk aesthetic. Taiwanese mythological palette, heavy black outlines, ink-wash backgrounds. A visual identity so specific it coined its own genre term. The art direction is the pitch.</div>
+        <div class="award">★ BitSummit Visual Art Winner 2024</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1809540/Nine_Sols/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Nine+Sols+trailer+official" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1599510/header.jpg" alt="Venba header" loading="lazy">
+      <div class="info">
+        <h3>Venba</h3>
+        <div class="dev">Visai Games — 2-person core team — 2023</div>
+        <div class="art-note">Warm illustration style with flat colour blocking. Tamil South-Indian domestic interiors rendered with care for material specificity: the textures of stainless steel, sari fabric, handwritten recipe cards. Art serves cultural authenticity.</div>
+        <div class="award">★ IGF Excellence in Narrative 2024</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1599510/Venba/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Venba+official+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1241520/header.jpg" alt="Umurangi Generation header" loading="lazy">
+      <div class="info">
+        <h3>Umurangi Generation</h3>
+        <div class="dev">Origame Digital — solo dev (Tūhoe/Māori) — 2020</div>
+        <div class="art-note">Flat cel-shaded illustration, heavy film photography aesthetic. Low-poly models with bold flat colour — more graphic novel than game. The visual identity encodes political urgency: the colour palette is sunset, always dusk, always ending.</div>
+        <div class="award">★ IGF Nuovo Award 2021</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1241520/Umurangi_Generation/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Umurangi+Generation+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STYLIZED 3D -->
+<section class="section" id="stylized3d">
+  <div class="section-header">
+    <h2>Stylized 3D</h2>
+    <span class="tag s3">growing post-2022</span>
+  </div>
+  <p class="section-desc">The fastest-growing award category since 2022. These games aren't trying to be photorealistic — they're pushing a specific stylized look that requires as much discipline as restraint.</p>
+  <div class="pattern-note s3">
+    The distinction that wins: not "stylized 3D" but "one specific stylized 3D language executed completely." A Short Hike is low-poly pastel. Stray is semi-realistic cat in a neon city. Kena is Pixar-grade. Each is immediately recognizable.
+  </div>
+  <div class="game-grid">
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1145360/header.jpg" alt="Hades header" loading="lazy">
+      <div class="info">
+        <h3>Hades</h3>
+        <div class="dev">Supergiant Games — ~17 people — 2020 (custom C++ engine)</div>
+        <div class="art-note">Isometric Greek-myth palette: saturated jewel tones, heavy black outlines on sprites, stylized character portraits with Klimt-adjacent gold and vermillion. Every character looks like a stained glass window panel.</div>
+        <div class="award">★ TGA Best Indie + Best Art Direction 2020. 1M+ copies in 3 weeks.</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1145360/Hades/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Hades+Supergiant+trailer+official" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1055540/header.jpg" alt="A Short Hike header" loading="lazy">
+      <div class="info">
+        <h3>A Short Hike</h3>
+        <div class="dev">Adam Robinson-Yu — solo developer — 2019/2020</div>
+        <div class="art-note">Dithered low-poly pastels, N64-adjacent fog and texture compression. Warmth communicated entirely through palette and ambient light. No UI chrome, no quest markers — visual clarity as design philosophy.</div>
+        <div class="award">★ IGF Grand Prize 2020</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1055540/A_Short_Hike/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=A+Short+Hike+trailer+official" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1533420/header.jpg" alt="Stray header" loading="lazy">
+      <div class="info">
+        <h3>Stray</h3>
+        <div class="dev">BlueTwelve Studio — ~18 people — 2022 (Unreal 4)</div>
+        <div class="art-note">High-fidelity cat animation in a neon cyberpunk city. Near-photorealistic enough to sell the cat as real; stylized enough in environment design to feel handcrafted. The tension between realistic and stylized is itself the aesthetic.</div>
+        <div class="award">★ TGA Best Art Direction nominee 2022, BAFTA nominee</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1533420/Stray/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Stray+game+official+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1497440/header.jpg" alt="COCOON header" loading="lazy">
+      <div class="info">
+        <h3>COCOON</h3>
+        <div class="dev">Geometric Interactive — ~8 people — 2023</div>
+        <div class="art-note">Organic sci-fi insect aesthetic. Muted earth tones with bioluminescent accent colours. Every environment reads like a cross-section of an alien organism. Visual design serves mechanic: nested worlds require visual hierarchy of colour and scale.</div>
+        <div class="award">★ IGF Excellence in Design 2024, TGA Best Debut Indie 2023</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1497440/COCOON/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=COCOON+game+official+trailer+2023" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1326140/header.jpg" alt="Kena Bridge of Spirits header" loading="lazy">
+      <div class="info">
+        <h3>Kena: Bridge of Spirits</h3>
+        <div class="dev">Ember Lab — ~14 people — 2021 (Unreal 4)</div>
+        <div class="art-note">Pixar-grade character animation from a 14-person first studio. Rich foliage, high-quality facial animation, warm Studio Ghibli-inspired palette. Proof that small teams can achieve AAA visual quality with Unreal 4.</div>
+        <div class="award">★ BAFTA Best Debut Dev 2022, TGA Art Direction nominee</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1326140/Kena_Bridge_of_Spirits/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Kena+Bridge+of+Spirits+trailer+official" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/553420/header.jpg" alt="Tunic header" loading="lazy">
+      <div class="info">
+        <h3>Tunic</h3>
+        <div class="dev">Andrew Shouldice — solo developer (6 years) — 2022</div>
+        <div class="art-note">Isometric low-poly with strong Zelda adjacency, but the in-game instruction manual (written in invented language) is its visual signature. The art direction includes typography, diegetic UI, and the texture of worn paper.</div>
+        <div class="award">★ IGF Seumas McNally Grand Prize 2023, BAFTA Best Debut Dev</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/553420/Tunic/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Tunic+game+official+trailer+2022" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HYBRID / MIXED MEDIA -->
+<section class="section" id="hybrid">
+  <div class="section-header">
+    <h2>Hybrid &amp; Mixed Media</h2>
+    <span class="tag hy">strong Visual Art signal</span>
+  </div>
+  <p class="section-desc">Games that deliberately mix visual modes — 3D + 2D, digital + physical, FMV + game. The collision of modes is itself the artistic statement.</p>
+  <div class="pattern-note hy">
+    Hybrid art direction signals conceptual intent. When Inscryption puts pixel cards on a 3D cabin table, the clash is deliberate — the game is <em>about</em> the layers. Judges read this correctly as artistic decision, not inconsistency.
+  </div>
+  <div class="game-grid">
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1092790/header.jpg" alt="Inscryption header" loading="lazy">
+      <div class="info">
+        <h3>Inscryption</h3>
+        <div class="dev">Daniel Mullins — solo developer — 2021</div>
+        <div class="art-note">Three deliberately different visual modes: lo-fi 3D escape room cabin → pixel card game → 90s-era desktop FMV. The visual mode shifts with the meta-layers of the game. Art direction as narrative structure.</div>
+        <div class="award">★ IGF Grand Prize 2022, TGA Best Indie nominee</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1092790/Inscryption/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Inscryption+official+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1350400/header.jpg" alt="IMMORTALITY header" loading="lazy">
+      <div class="info">
+        <h3>IMMORTALITY</h3>
+        <div class="dev">Half Mermaid / Sam Barlow — ~10 people — 2022</div>
+        <div class="art-note">Three FMV films shot in distinct film grain and colour grading for three different decades. The visual investigation mechanic — scrubbing through footage — makes the act of looking cinematic. Photography, not game art.</div>
+        <div class="award">★ IGF Grand Prize 2023, TGA Best Narrative 2022</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1350400/Immortality/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=IMMORTALITY+game+Sam+Barlow+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- VOXEL / ABSTRACT -->
+<section class="section" id="voxel">
+  <div class="section-header">
+    <h2>Voxel, Destructible &amp; Abstract</h2>
+    <span class="tag vx">mechanic-driven visual identity</span>
+  </div>
+  <p class="section-desc">Games where the visual style isn't decorative — it's structural. The art is the mechanic. Teardown wouldn't be possible in a different renderer. Unpacking's aesthetic is its emotional argument.</p>
+  <div class="pattern-note vx">
+    These games answer "what does it look like in one frame" with something functional: every surface destructible, every object an artifact of a life. The visual identity communicates the mechanic before a word of explanation.
+  </div>
+  <div class="game-grid">
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1167630/header.jpg" alt="Teardown header" loading="lazy">
+      <div class="info">
+        <h3>Teardown</h3>
+        <div class="dev">Tuxedo Labs — solo dev → small team — 2022</div>
+        <div class="art-note">Fully destructible voxel environments with realistic ray-traced lighting. Every surface can be cut, smashed, or driven through. The visual language communicates the mechanic: soft voxel rendering with hard physics simulation. A single screenshot tells you everything.</div>
+        <div class="award">★ BAFTA Technical Achievement 2023, IGF Excellence in Design nominee</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1167630/Teardown/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Teardown+game+official+trailer" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img src="https://cdn.akamai.steamstatic.com/steam/apps/1135690/header.jpg" alt="Unpacking header" loading="lazy">
+      <div class="info">
+        <h3>Unpacking</h3>
+        <div class="dev">Witch Beam — 2-person core — 2021</div>
+        <div class="art-note">Low-fi pixel art with deliberate household-item specificity. The visual design is inventory management as emotional archaeology: the colour palette of someone's stuff across six apartments tells a life story without a word of dialogue.</div>
+        <div class="award">★ BAFTA Best British Game + Best Audio 2022, IGF Excellence in Narrative nominee</div>
+        <div class="card-actions">
+          <a class="btn btn-steam" href="https://store.steampowered.com/app/1135690/Unpacking/" target="_blank">Steam →</a>
+          <a class="btn btn-trailer" href="https://www.youtube.com/results?search_query=Unpacking+game+official+trailer+2021" target="_blank">▶ Trailer</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CROSS-CUTTING FINDINGS -->
+<section class="findings">
+  <h2>Cross-category findings</h2>
+  <ul>
+    <li><strong>Visual identity answers one question:</strong> "could you identify this game from a single screenshot?" Every game on this page answers yes. Generic 3D with competent execution doesn't win.</li>
+    <li><strong>Art serves mechanic or narrative:</strong> COCOON's colour-coded nested worlds serve the puzzle structure. Inscryption's visual mode shifts serve the meta-narrative. Art direction that's purely decorative loses to art direction that's structural.</li>
+    <li><strong>Pixel art is table stakes, not a differentiator:</strong> The question is not "pixel art?" but "what specific vision of pixel art, and executed how?" UFO 50's deliberate variation per game is the innovation, not the pixels themselves.</li>
+    <li><strong>Small teams over-indexed in hand-drawn 2D:</strong> solo and 2-person teams — Venba, Spiritfarer (small team), Umurangi — produce the most distinctive illustrated work. Unified vision beats committee decisions.</li>
+    <li><strong>Non-Western visual culture is rising:</strong> Nine Sols (Taopunk), Umurangi Generation (Māori futurism), Venba (Tamil domestic life) — cultural specificity in art direction is increasingly a competitive advantage, not a niche.</li>
+    <li><strong>Engines don't determine visual quality:</strong> Hades (custom), A Short Hike (Unity), Balatro (LÖVE), COCOON (Unity) — wildly different technical bases, visually distinctive results. Art direction precedes engine choice.</li>
+  </ul>
+</section>
+
+<div class="footer">
+  <span>ver-kyker wiki — <a href="/">index</a> · <a href="/topics/indie-winning-recipes.md">winning recipes</a> · <a href="/topics/indie-engines-frameworks.md">engines</a> · <a href="/topics/indie-contest-winners.md">winners by year</a></span>
+  <span>Images: Steam CDN. All rights reserved by respective developers.</span>
+</div>
+
+</body>
+</html>

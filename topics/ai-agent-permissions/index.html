@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Agent Permission Models — Hub</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230a0a0c'/%3E%3Ctext x='8' y='12.5' text-anchor='middle' font-size='12' fill='%23c4a35a'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/wiki/_assets/observatory.css">
+</head>
+<body>
+<div id="scene" aria-hidden="true">
+  <div data-depth="0.05" class="layer nebula"></div>
+  <div data-depth="0.10" class="layer stars" data-stars="160" data-size="1.1"></div>
+  <div data-depth="0.25" class="layer stars" data-stars="70" data-size="1.7"></div>
+  <div data-depth="0.50" class="layer stars" data-stars="26" data-size="2.5"></div>
+</div>
+<canvas id="constellation" aria-hidden="true"></canvas>
+<nav class="crumb">
+  <span class="brand">ver-kyker</span><span class="sep">·</span>
+  <a href="/wiki/">index</a><span class="sep">·</span>
+  <a href="/wiki/requests/">requests</a><span class="sep">·</span>
+  <a href="/wiki/log/">log</a>
+</nav>
+<main id="content"></main>
+<footer class="statsbar">
+  <span class="stat"><span class="stat-label">pages</span><span class="stat-value">71</span></span>
+  <span class="stat"><span class="stat-label">requests</span><span class="stat-value">13</span></span>
+  <span class="stat"><span class="stat-label">last entry</span><span class="stat-value">2026-09-19</span></span>
+  <span class="stat obs">✦ research observatory</span>
+</footer>
+<script src="/wiki/_assets/marked.min.js"></script>
+<script src="/wiki/_assets/parallax.min.js"></script>
+<script>window.__MD__ = "# AI Agent Permission Models — Hub\n\n> A guide to permission and approval modes across Claude Code and OpenAI Codex CLI:\n> what each permutation gives you, what it restricts, and the tradeoffs.\n> Companion piece: [what \"sandbox\" actually means technically](/wiki/concepts/agent-sandbox/).\n\n---\n\n## Why permissions matter for agentic coding\n\nAI coding agents can read files, edit code, run shell commands, install packages, push to git, and make network calls. By default, every one of those actions requires your approval. Permission modes let you slide the dial from *maximum oversight* to *maximum autonomy* — but each position changes your blast radius if something goes wrong.\n\nThe key insight: **permissions and sandbox are two separate, complementary layers**.\n\n| Layer | Controls | Enforced by |\n|---|---|---|\n| **Permissions / Approval** | *Which tools Claude/Codex is allowed to call* | Application logic, allow/deny rules |\n| **Sandbox** | *What those tools can actually do at the OS level* | Kernel (Seatbelt, bubblewrap, Job Objects) |\n\nYou can have generous permissions inside a strict sandbox, or strict permissions with no sandbox at all. The most secure setup combines both.\n\n---\n\n## Quick comparison: all modes at a glance\n\n| | Claude Code | Codex CLI |\n|---|---|---|\n| **Max safety** | `default` | `on-request` + `read-only` |\n| **Read-only exploration** | `plan` | `on-request` + `read-only` |\n| **Balanced dev** | `acceptEdits` | `on-request` + `workspace-write` |\n| **Unattended, contained** | `dontAsk` + allow list | `never` + `workspace-write` |\n| **AI-mediated auto** | `auto` (Team/Enterprise) | _(no equivalent — approval is binary)_ |\n| **Full trust, isolated env** | `bypassPermissions` | `--dangerously-bypass-approvals-and-sandbox` |\n| **Network control** | `allowedDomains` in sandbox config | `network_access = false` (default); domain allowlist |\n| **Admin lock-down** | Enterprise managed-settings.json | `requirements.toml` (cannot be overridden) |\n\n---\n\n## Deep dives\n\n- [Claude Code permission modes](/wiki/topics/claude-code-permissions/) — all 6 modes, configuration syntax, hooks, tradeoffs table\n- [Codex CLI permission modes](/wiki/topics/codex-permissions/) — approval modes, sandbox levels, permission profiles, two-phase runtime\n- [What the sandbox actually is](/wiki/concepts/agent-sandbox/) — OS-level mechanics: Seatbelt, bubblewrap, Docker, network proxy, setup steps\n\n---\n\n## The \"big picture\" risk model\n\nWhen choosing a mode, ask four questions:\n\n1. **Can the agent reach production?** If yes, never use bypass/full-access without external isolation.\n2. **Is the repo disposable?** If no, keep at least workspace-write (not danger-full-access).\n3. **Do you need unattended operation?** Use `never` (Codex) or `dontAsk` + allow list (Claude), not bypass.\n4. **Is there a sandbox underneath?** If yes, you can afford more permissive approval modes — the OS enforces the real limits.\n\nThe most common mistake: using `bypassPermissions` or `--yolo` on a long-lived host machine \"because it's faster.\" That's not a sandbox — it's a loaded gun.\n\n---\n\n## Sources\n\n- ai-agent-permissions-research.md\n";</script>
+<script src="/wiki/_assets/observatory.js"></script>
+</body>
+</html>

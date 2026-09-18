@@ -68,8 +68,10 @@ const git = (args) =>
   execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 });
 
 async function main() {
-  // 1. Snapshot the working tree exactly as a commit would (respects .gitignore).
-  git(['add', '-A']);
+  // Publish only generated site paths and build tooling, never private sources.
+  const publicPaths = ['_build', '_assets', 'topics', 'concepts', 'entities', 'demos', 'log', 'requests', 'index.html', '.nojekyll'];
+  const existing = publicPaths.filter((p) => fs.existsSync(path.join(ROOT, p)));
+  git(['add', '-A', '--', ...existing]);
   const entries = git(['ls-files', '-s'])
     .split('\n')
     .filter(Boolean)
@@ -77,7 +79,8 @@ async function main() {
       const [meta, file] = line.split('\t');
       const [mode, sha] = meta.split(' ');
       return { mode, sha, path: file };
-    });
+    })
+    .filter((e) => publicPaths.some((p) => e.path === p || e.path.startsWith(p + '/')) && fs.existsSync(path.join(ROOT, e.path)));
   if (!entries.length) {
     console.error('nothing to publish (empty tree)');
     process.exit(1);

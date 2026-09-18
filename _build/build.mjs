@@ -1,7 +1,7 @@
 // Build the ver-kyker "observatory" wiki for GitHub Pages from markdown source.
 // Self-contained: template.html + assets/ live alongside this script in _build/.
-//   markdown source : $WIKI_SRC (default /workspace/agent/wiki — the agent's wiki)
-//   output (served) : this script's parent dir (the repo root, what Pages serves)
+//   markdown source : $WIKI_SRC (default ../wiki, relative to this script)
+//   output (served) : $WIKI_OUT (default repo root, what Pages serves)
 // Run:  node _build/build.mjs       (host)
 //   or: bun  _build/build.mjs       (container)
 // The agent never edits HTML/CSS — it edits markdown and this produces the theme.
@@ -10,19 +10,23 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)); // _build/
-const OUT = path.resolve(HERE, '..');                      // repo root (published)
-const SRC = process.env.WIKI_SRC || '/workspace/agent/wiki';
+const ROOT = path.resolve(HERE, '..');
+const OUT = process.env.WIKI_OUT ? path.resolve(process.env.WIKI_OUT) : ROOT;
+const SRC = process.env.WIKI_SRC ? path.resolve(process.env.WIKI_SRC) : path.join(ROOT, 'wiki');
 const TEMPLATE_FILE = path.join(HERE, 'template.html');
 const ASSETS_DIR = path.join(HERE, 'assets');
 const BASE = '/wiki';
 
 if (!fs.existsSync(SRC)) { console.error(`source not found: ${SRC} (set WIKI_SRC)`); process.exit(1); }
 
-// clean OUT, preserving repo metadata and the build toolchain
-for (const e of fs.readdirSync(OUT)) {
-  if (e === '.git' || e === '_build') continue;
-  fs.rmSync(path.join(OUT, e), { recursive: true, force: true });
+// Clean only known generated paths: the repository now also owns its source.
+const generated = ['_assets', 'topics', 'concepts', 'entities', 'demos', 'log', 'requests', 'index.html', '.nojekyll'];
+for (const e of generated) {
+  const target = path.join(OUT, e);
+  if (SRC === target || SRC.startsWith(target + path.sep)) throw new Error(`Refusing to delete source: ${target}`);
 }
+fs.mkdirSync(OUT, { recursive: true });
+for (const e of generated) fs.rmSync(path.join(OUT, e), { recursive: true, force: true });
 
 // theme assets -> _assets/
 fs.mkdirSync(path.join(OUT, '_assets'), { recursive: true });

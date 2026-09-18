@@ -1,0 +1,224 @@
+# TypeSafe AI and System One models
+
+> Research pass completed 2026-09-19. TypeSafe’s public name for the model class is **System One**; its first model is **Jev**. This page separates the documented API contract from vendor claims and from our own reproduction forecast.
+
+## Executive judgment
+
+TypeSafe is best understood as a typed, confidence-aware judgment service for embedding narrow AI decisions inside ordinary software. Jev takes application state plus explicitly typed questions and returns constrained decisions, probability distributions, and (for `Choice` and `Score`) a confidence value. The surrounding program keeps control flow, arithmetic, side effects, and escalation logic.
+
+The important shift is the interface contract:
+
+```text
+application state + typed questions
+        → System One evaluation
+        → typed answers + probabilities/confidence
+        → ordinary code branches, ranks, routes, or escalates
+```
+
+This is not a general replacement for an LLM. It gives up prose, code generation, open-ended planning, and explanations in exchange for constrained outputs, parallel evaluation, and a software-friendly uncertainty signal. “No hallucinations” is true only in the narrow schema sense: a `Choice` cannot invent an option outside the supplied set. Jev can still make a semantically wrong choice, score, or probability; TypeSafe publishes a failure-mode page documenting exactly that.
+
+## Research approach and evidence boundary
+
+This ingest used the official [documentation index](https://docs.typesafe.ai/llms.txt), the [introduction](https://docs.typesafe.ai/introduction), the [System One concept page](https://docs.typesafe.ai/concepts/system-one), the [AI primer](https://docs.typesafe.ai/introduction/machine-learning-primer), the [API reference](https://docs.typesafe.ai/api), the [Jev 1.13 jaggedness page](https://docs.typesafe.ai/model-jaggedness/jev-1.13), the [launch article](https://typesafe.ai/blog/introducing-system-one-models-and-jev), TypeSafe’s public [GitHub organisation](https://github.com/typesafe-ai), its [LLM adapter](https://github.com/typesafe-ai/system-one-adapter-python), and primary literature on [neural-network calibration](https://proceedings.mlr.press/v70/guo17a).
+
+Claims in this page are tagged implicitly by their wording:
+
+- “TypeSafe documents/claims” means first-party evidence, not independent validation.
+- “The practical implication” is an engineering inference from that contract.
+- “Forecast” is a calibrated judgment about what others can reproduce or what TypeSafe may release; it is not a fact about the company’s roadmap.
+
+## What it is
+
+The current public model is Jev 1.13 (`jev-1.13.0`, usually addressed as `jev-latest`) behind `POST https://api.typesafe.ai/v1/systemone`. The documented request contains:
+
+1. **State** — a string, JSON object, or array of text values. It is the material being judged: a message, record, policy, conversation, or application state.
+2. **Questions** — a map of named, typed questions. Each has an application-chosen ID, a question type, instructions, and, for `Choice`/`Score`, criteria.
+3. **Model** — the System One model to run.
+
+Jev currently accepts text only. Images, audio, video, and binary inputs must be converted or preprocessed by application code. The model page currently documents a 64k-token request budget, including a 32k limit for the state plus the longest question. The published service is therefore a hosted API, not a downloadable model package.
+
+## The three primitives
+
+| Primitive | Question shape | Return value | Good fit |
+|---|---|---|---|
+| `Choice` | “Which option from this closed set?” | selected option, probability for every option, confidence | intent routing, category, handler, action selection |
+| `Score` | “Where does this state fall on this defined ordered scale?” | probability-weighted score, level legend, distribution, confidence | severity, urgency, frustration, risk, relevance |
+| `Noul` | “Is this condition true?” | `noul`, a 0–1 probability of yes | flags, eligibility, evidence checks, presence/absence |
+
+The answer space is supplied by the application. `Choice` cannot return an undeclared label. A `Score` is not a precise measurement: TypeSafe specifically warns against using it to reconstruct exact numbers. A `Noul` value near 0.5 means uncertainty, not a “medium” level.
+
+## How it works in practice
+
+### 1. Put evidence in state
+
+The application assembles only the context needed for the decision. For a refund workflow, state might contain the customer message, transaction records, and refund policy. Questions define judgments about that material; state and questions are intentionally separate.
+
+### 2. Ask atomic questions
+
+TypeSafe recommends one focused judgment per question. A broad request such as “rate this startup pitch” becomes independent questions for market size, technical feasibility, and differentiation. The program then chooses the weights and policy. This makes priorities a code change rather than a prompt rewrite.
+
+### 3. Evaluate questions independently and in parallel
+
+TypeSafe says the state is ingested once and each question is evaluated independently against the same state. Multiple questions can be sent in one request, so speculative questions can be fanned out and ignored later if a branch makes them irrelevant. The vendor’s claimed implementation uses a parallel sampler rather than ordinary token-by-token generation.
+
+### 4. Return typed evidence for a code-owned decision
+
+The application can compare, sort, threshold, combine, log, or pass answers into later logic. Confidence can gate behaviour:
+
+```python
+if answer.confidence < 0.5:
+    send_to_human()
+elif answer.choice == "approve_transfer" and answer.confidence > 0.9:
+    request_confirmation_then_execute()
+else:
+    ask_for_confirmation()
+```
+
+The threshold is not supplied by the model. It is a product/risk decision owned by the application. The model’s confidence is useful only if it is calibrated for the relevant workload and distribution.
+
+## What “calibrated” means
+
+TypeSafe’s RLCD (“Reinforcement Learning for Calibrated Decisions”) is described as a training objective aimed at decisions and calibrated probabilities rather than generated text. In calibration terms, predictions assigned probability 0.8 should be correct approximately 80% of the time across a comparable population; that is not a guarantee for any individual prediction.
+
+This is an established machine-learning concern, not a magic property. The calibration literature shows that modern neural networks can be poorly calibrated and that post-hoc techniques such as temperature scaling can help. A local implementation therefore needs a held-out calibration set, reliability metrics, and domain-specific thresholds. Do not treat a raw softmax maximum or an LLM’s self-reported confidence as equivalent to Jev’s claimed contract.
+
+## How it differs from ordinary LLM use
+
+| Dimension | Ordinary LLM call | TypeSafe / Jev |
+|---|---|---|
+| Optimisation target | human-preferred or verifiably generated text | calibrated decisions for software |
+| Primary output | token sequence / text | closed-set values, scores, probabilities |
+| Software integration | parse, validate, retry, then interpret | consume typed answer objects directly |
+| Sampling | normally autoregressive, token by token | vendor claims parallel answer generation |
+| Composition | model may hide reasoning and workflow logic in one prompt | code composes atomic model judgments |
+| Uncertainty | often prompted or inferred externally | probabilities are first-class; confidence is returned for `Choice`/`Score` |
+| Capability | prose, code, explanations, planning, open-ended generation | focused semantic judgments; no prose/code generation |
+| Failure surface | malformed schema plus semantic errors and hallucinated values | schema/type escape is constrained, but semantic errors remain |
+
+The distinction is best made at two levels:
+
+- **Product/interface level:** TypeSafe deliberately is not an LLM-style chat or generation interface.
+- **Internal architecture level:** public materials are insufficient to prove that Jev is built from a wholly different family of neural components. TypeSafe says “new model architecture” and “parallel sampler” but does not publish the architecture, parameter count, sampler implementation, training corpus, or weights. “Not an LLM” is therefore a category distinction about what the system is optimized to do, not evidence that it contains no transformer-like or language-trained components.
+
+TypeSafe’s own public [System One adapter](https://github.com/typesafe-ai/system-one-adapter-python) makes the contrast concrete. It wraps ordinary OpenAI/Anthropic-style LLM APIs, asks them for structured outputs or JSON, validates malformed responses, retries, and can normalise probabilities. That adapter is a useful compatibility layer, but it is not Jev: it preserves the LLM’s generated-output path and its associated latency, parsing, and calibration problems.
+
+## Problems it can solve well
+
+The common shape is: “the input is messy or semantic, the answer space is known, and code should decide what happens next.” Strong candidates include:
+
+- **Routing:** classify an inbound request, choose a specialist model, select a queue, or escalate to a person.
+- **Ranking and retrieval:** score query–candidate relevance, rerank passages, select context for a downstream model, or align entities.
+- **Moderation and guardrails:** detect jailbreaks, prompt injection, policy violations, sensitive data, unsafe tool calls, or citation support.
+- **Workflow automation:** classify invoices, claims, tickets, applications, or security incidents, then apply deterministic business rules.
+- **Feature extraction:** turn large volumes of natural-language records into probabilistic features for a conventional predictive model.
+- **Real-time semantic control:** make a fast choice inside a UI, game, or interactive system where a multi-second generative call is too slow.
+- **Semantic linting and verification:** check whether text meets a guideline, whether a response supports a policy, or whether an agent trace needs review.
+
+The [workflow evaluation site](https://evals.typesafe.ai/) demonstrates structured workflows for security incidents, agent-trace review, invoice processing, and customer service. Its methodology is important: decompose the workflow into rules plus narrow `Noul`/`Choice`/`Score` questions, then compare complete workflows rather than comparing one giant prompt with one giant prompt.
+
+## Where it is a poor fit
+
+Jev’s own limitations page says it can be literal, weak on maths and counting, unreliable for date/time comparison, less reliable with indirection, distracted by irrelevant state, and vulnerable to adversarial content inside the state. It also says to use a generative model when generation is needed.
+
+Keep these parts in ordinary code or a different model:
+
+- arithmetic, exact counting, date ordering, durations, and numeric invariants;
+- parsing media or binary inputs;
+- long chains of dependent reasoning;
+- open-ended prose, code, explanations, or plans;
+- policy actions where an uncertain semantic score is being mistaken for proof;
+- adversarial or high-stakes decisions without representative testing, monitoring, and human fallback.
+
+The practical design is hybrid: deterministic code prepares and validates state, Jev supplies semantic judgements, and code owns the final action.
+
+## Can others host it locally?
+
+### Current evidence: not the official Jev model
+
+As of 2026-09-19, TypeSafe’s public docs describe Jev through a hosted API and early access. The public `typesafe-ai` organisation lists SDKs, skills, an LLM-backed adapter, and unrelated/forked projects, but no Jev weight release or reproducible Jev training repository. This is an observation about the public surface at the retrieval date, not proof that a private or unindexed release does not exist.
+
+The official legal page discusses hosted-account data handling and enterprise zero-data-retention options. It does not announce a self-hosting licence or model-weight licence. Consequently, the safe answer today is: **the official Jev runtime is not locally hostable by ordinary users based on the public evidence reviewed.**
+
+There is also an important legal boundary for anyone experimenting with the hosted service. The [Master Customer Agreement](https://typesafe.ai/legal/mca), last updated 2026-08-27, defines the service as a TypeSafe-hosted web interface/API and restricts customers from using the service or its output for model distillation, training a model to imitate the service, developing a similar or competing product, reverse engineering, or publishing benchmarks. That does not make independent implementation from public concepts impossible, but it means a customer should not use Jev responses as a cloning dataset or treat the hosted API as permission to build a competitor. This is a contract observation, not legal advice; applicability depends on the agreement accepted and the jurisdiction.
+
+### The approach is much easier to reproduce than the frontier model
+
+There are several different things someone might mean by “duplicate TypeSafe”:
+
+| Target | Difficulty | What is actually required |
+|---|---:|---|
+| API shape | Low | JSON state, three question types, typed response objects |
+| Code-owned workflow pattern | Low | deterministic composition, thresholds, fan-out, escalation |
+| Compatible wrapper over an LLM | Low–medium | structured-output prompting, schema validation, retries, probability normalisation |
+| Useful local decision model | Medium | an encoder/cross-encoder or small instruction model fine-tuned for the domain, plus calibration and abstention |
+| Jev-level general semantic quality | High/unknown | proprietary data, model/training details, RLCD recipe, evaluation harness, and hardware/serving work |
+| Exact Jev reproduction | Currently infeasible from public information | weights, architecture, training corpus, sampler, and deployment details are undisclosed |
+
+The interface and workflow ideas are not proprietary in the same sense as Jev’s weights. Open components already cover much of the substrate: encoder-only models are established for classification and retrieval; [ModernBERT](https://arxiv.org/abs/2412.13663) is an open long-context encoder designed for efficient downstream classification/retrieval; [Sentence Transformers CrossEncoders](https://www.sbert.net/docs/cross_encoder/usage/usage.html) provide local pair scoring/classification; and [SetFit](https://arxiv.org/abs/2209.11055) provides a prompt-free fine-tuning path for few-shot classification.
+
+### A realistic local reproduction path
+
+1. **Prototype the contract.** Implement `Choice`, `Score`, and `Noul` as local Python/TypeScript types. Make the answer space closed and make “abstain/unknown” explicit where appropriate.
+2. **Use the existing local Qwen service as a compatibility baseline.** The public adapter supports OpenAI-compatible endpoints, so a local Qwen/vLLM endpoint can provide a Jev-shaped API. This is a software-interface reproduction, not a System One model: the model still generates structured text and needs validation/retries.
+3. **Train an encoder decision model for a fixed domain.** Start with an open encoder or cross-encoder, fine-tune a classification/regression head, and expose batched logits. For a changing label set, use a question-conditioned pair model or a small instruction model rather than a fixed head.
+4. **Calibrate and abstain.** Hold out calibration data, measure reliability/ECE/Brier-style metrics, fit temperature or another calibration method if needed, and set action thresholds per risk class. Add an explicit human-review route.
+5. **Benchmark workflow quality, not just accuracy.** Compare a large LLM, the local adapter, and the local decision model on the same decomposed workflow. Measure semantic quality, calibration, abstention/coverage, p50/p95 latency, throughput, memory, and total cost.
+6. **Stress the published jagged edges.** Test negation, double negatives, irrelevant context, prompt injection in state, long lists, dates, numeric values, label imbalance, distribution shift, and multilingual inputs.
+
+This route can make a valuable, private “semantic if-statement” service. It will not justify claiming that the local model is Jev unless TypeSafe releases weights and a reproducible specification.
+
+## Will TypeSafe release open weights?
+
+There is no public roadmap evidence in the reviewed sources that promises open weights. My forecast is therefore:
+
+- **Near term:** more likely hosted/API access, SDKs, adapters, and third-party reimplementations than a full Jev-weight release. A proprietary company with a new model, early-access demand, and undisclosed training recipe has a strong reason to keep the model service-side.
+- **Medium term:** a smaller distilled model, a licensed private deployment, or a training/evaluation recipe is plausible if local demand becomes a distribution bottleneck. A compact System One model would be easier to release than the flagship model and could seed an ecosystem.
+- **Most likely regardless of official release:** the *approach* will be duplicated. Closed answer spaces, encoder classifiers, cross-encoders, structured-output wrappers, calibration, abstention, and code-owned workflows are all buildable from open components. What is hard to duplicate is Jev’s general semantic competence, calibrated uncertainty across many unseen tasks, and claimed latency/cost frontier.
+
+Confidence in this forecast is moderate for the reproduction trend and low for TypeSafe’s own release decision. The public launch article explicitly says the team is still in Jev’s early days and that more is coming, but “more” is not a commitment to open weights.
+
+## Relevance to this wiki
+
+TypeSafe is a natural companion to the wiki’s existing research on:
+
+- [LLM Wiki pattern](llm-wiki-pattern.md): TypeSafe can classify, score, route, verify, and lint the persistent wiki, while an LLM remains responsible for synthesis and prose generation.
+- [Open Knowledge Format](open-knowledge-format.md): `Choice`/`Score`/`Noul` could provide typed quality checks over OKF concepts, source support, freshness, or cross-link health.
+- [Context engineering](context-engineering.md): TypeSafe’s “filter first, then send only relevant state” guidance reinforces retrieval-aware context assembly.
+- [Hybrid retrieval](vector-search-hybrid-retrieval.md): a local or hosted decision model can rerank candidates or judge passage relevance after BM25/vector retrieval.
+- [Agentic engineering landscape](agentic-landscape.md): System One is a narrow semantic component inside a code-owned harness, not an autonomous agent that owns its own loop.
+
+The useful architectural synthesis is:
+
+```text
+raw sources → retrieval/filtering → System One judgements
+          → deterministic wiki/workflow updates → LLM prose synthesis/query
+```
+
+## Sources
+
+All web sources below were retrieved 2026-09-19.
+
+- [TypeSafe introduction](https://docs.typesafe.ai/introduction)
+- [TypeSafe documentation index](https://docs.typesafe.ai/llms.txt)
+- [System One concept](https://docs.typesafe.ai/concepts/system-one)
+- [State](https://docs.typesafe.ai/concepts/state)
+- [Primitives](https://docs.typesafe.ai/primitives)
+- [Confidence](https://docs.typesafe.ai/confidence)
+- [AI primer and RLCD](https://docs.typesafe.ai/introduction/machine-learning-primer)
+- [How to build with TypeSafe](https://docs.typesafe.ai/concepts/how-to-build-with-system-one)
+- [Patterns](https://docs.typesafe.ai/patterns)
+- [Example use cases](https://docs.typesafe.ai/concepts/use-case-map)
+- [Models](https://docs.typesafe.ai/models)
+- [API reference](https://docs.typesafe.ai/api)
+- [Jev 1.13 jaggedness and limitations](https://docs.typesafe.ai/model-jaggedness/jev-1.13)
+- [TypeSafe launch article](https://typesafe.ai/blog/introducing-system-one-models-and-jev)
+- [TypeSafe manifesto](https://typesafe.ai/manifesto)
+- [TypeSafe legal page](https://docs.typesafe.ai/legal)
+- [TypeSafe Master Customer Agreement](https://typesafe.ai/legal/mca)
+- [TypeSafe public GitHub organisation](https://github.com/typesafe-ai)
+- [System One adapter for ordinary LLM APIs](https://github.com/typesafe-ai/system-one-adapter-python)
+- [TypeSafe workflow evaluations](https://evals.typesafe.ai/)
+- [Guo et al., *On Calibration of Modern Neural Networks*](https://proceedings.mlr.press/v70/guo17a)
+- [ModernBERT paper](https://arxiv.org/abs/2412.13663)
+- [Sentence Transformers CrossEncoder documentation](https://www.sbert.net/docs/cross_encoder/usage/usage.html)
+- [SetFit paper](https://arxiv.org/abs/2209.11055)
