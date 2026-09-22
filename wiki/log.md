@@ -6,6 +6,11 @@ Append-only chronological record. Entry format (parseable with `grep "^## \[" lo
 ## [YYYY-MM-DD] <ingest|query|lint|request> | <title>
 ```
 
+## [2026-09-23] request | R-015 — Agentic verification and per-agent runtime environments
+## [2026-09-23] ingest | R-015 — The New Stack / Signadot article on pstack workflow + Signadot agent loops post
+Source: https://thenewstack.io/agentic-verification-distributed-systems/ + https://www.signadot.com/blog/agent-loops-feedback-problem
+Pages written: topics/agentic-verification-runtime (1 page)
+
 ## [2026-07-09] request | R-011 — Open Knowledge Format and multi-product wiki architecture
 ## [2026-07-09] ingest | R-011 — Karpathy LLM Wiki gist + Google Cloud OKF blog (Jun 2026)
 ## [2026-07-30] request | R-012 — Claude Code and Codex CLI permission models + sandbox mechanics
@@ -186,5 +191,10 @@ Sources: slynyrd-top-down-tiles-1.html, slynyrd-top-down-tiles-2.html, slynyrd-t
 Pages written: topics/pixel-art-topdown-scene-layout
 Coverage: perspective foundation, ground plane rules, element-by-element placement (trees/paths/buildings/fences/mountains/caves/rivers/bridges/ocean), composition principles, readability rules, quick-reference rule sheet for AI training
 ## [2026-07-04] deploy | R-010 — retry GitHub Pages deployment (transient failure)
+## [2026-09-22] request | R-014 — Jev-as-a-Judge (JaaJ) for agent evals
+## [2026-09-22] ingest | R-014 — LangChain blog "Jev-as-a-Judge for Agent Evals" (D. Shea, S. Roche, Sep 20 2026)
+Source: https://www.langchain.com/blog/jev-agent-evals-langsmith
+Pages written: topics/jev-as-a-judge-evals (new); topics/typesafe-ai-system-one amended (JaaJ section added)
+
 ## [2026-09-19] request | R-013 — TypeSafe AI and System One decision models
 ## [2026-09-19] ingest | R-013 — TypeSafe AI primary documentation, launch material, public SDK/adapter repositories, calibration literature, and local-reproduction analysis
