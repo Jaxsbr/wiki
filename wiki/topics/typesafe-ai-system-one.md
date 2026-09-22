@@ -177,6 +177,20 @@ There is no public roadmap evidence in the reviewed sources that promises open w
 
 Confidence in this forecast is moderate for the reproduction trend and low for TypeSafe’s own release decision. The public launch article explicitly says the team is still in Jev’s early days and that more is coming, but “more” is not a commitment to open weights.
 
+## Jev-as-a-Judge (JaaJ) — agent evaluation use case
+
+The Sep 2026 LangChain experiment ("Jev-as-a-Judge for Agent Evals") tested Jev as a third category of agent evaluator alongside code-based and LLM-as-judge approaches. Key results against GPT-5.6 Luna/Terra and Claude Sonnet 4.6 on a weather-agent test set (5 cases × 100 repetitions):
+
+- **Accuracy (binary pass/fail):** Jev matched the human oracle on 100% of 500 decisions; Claude matched on 80%.
+- **Precision (quality-score variance):** Jev variance was 92–913× lower than LLM judges.
+- **Cost/latency:** Jev averaged $0.00035/call and 0.44 s; Claude cost $28.17 per 1,000 calls.
+
+The structural reason: agent evaluation is a decision task, and Jev is designed for decision tasks. An LLM judge generates text first and then maps it to a score; Jev returns typed verdicts from the answer space supplied at call time. The evaluation in the LangChain experiment showed the LLM judges reaching the wrong binary decision more frequently and varying widely on continuous scoring — consistent with what you would expect from token-by-token generation being bent to a classification task.
+
+The practical unlock is **online evals at scale**: at $0.34 per 1,000 calls, teams can run multiple atomic eval questions across every production trace rather than sampling. This directly supports a tighter agent-development feedback loop.
+
+Caveats: the experiment was narrow (weather agent, 5 cases); open-ended evals still need LLMs; low cost amplifies consistent errors. Design guidance and the full results table are in [jev-as-a-judge-evals](jev-as-a-judge-evals.md).
+
 ## Relevance to this wiki
 
 TypeSafe is a natural companion to the wiki’s existing research on:
