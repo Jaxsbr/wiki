@@ -15,6 +15,21 @@ Entry format:
 - **Pages:** [page](topics/page.md), ...
 ```
 
+## R-015 — Agentic verification and per-agent runtime environments
+- **Date:** 2026-09-23
+- **Request:** Extract a generic framework from the pstack/Signadot article on high-volume parallel agentic development. Concept: self-verification as critical infrastructure + per-agent isolated runtime environments as the prerequisite for parallel agentic throughput.
+- **Status:** answered
+- **Pages:**
+  - [agentic-verification-runtime](topics/agentic-verification-runtime.md) — throughput argument, runtime model, distributed systems environment problem (3 failing strategies, 5 requirements), virtualized full-stack approach, CLI+feature map interface, human review math, industry context
+
+## R-014 — Jev-as-a-Judge (JaaJ) for agent evals
+- **Date:** 2026-09-22
+- **Request:** Process LangChain blog post on Jev-as-a-Judge into the wiki. Improve existing Jev research (R-013) by introducing the JaaJ use case — Jev as a third category of agent evaluator alongside code-based and LLM-as-judge.
+- **Status:** answered
+- **Pages:**
+  - [jev-as-a-judge-evals](topics/jev-as-a-judge-evals.md) — JaaJ pattern, LangChain experiment results (accuracy/precision/cost), design guidance, caveats, and scale implications
+  - [typesafe-ai-system-one](topics/typesafe-ai-system-one.md) — amended: new JaaJ section with cross-link and summary results
+
 ## R-013 — TypeSafe AI and System One decision models
 - **Date:** 2026-09-19
 - **Request:** Research the TypeSafe AI system from its documentation: how it works, what problems it can solve, how it differs from LLMs, and whether the approach is likely to become locally hostable or reproducible like open-weight LLMs. Use parallel research and synthesize the result into the wiki.
