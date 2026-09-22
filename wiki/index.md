@@ -31,6 +31,14 @@
 - [agent-memory-platforms](topics/agent-memory-platforms.md) — deep comparison of Mem0, Zep, Letta, LangChain, OpenAI Dreaming V3, Redis Agent Memory; pricing, latency benchmarks, vector store p50/p95 data
 - [agent-memory-critiques](topics/agent-memory-critiques.md) — complexity cost, memory poisoning (84% attack success rate, CVE-2025-32711), staleness failures, retrieval-without-budget problems, HNSW degradation at scale, stateless argument; notable papers table
 
+## Agentic Verification and Runtime Environments (R-015)
+
+- [agentic-verification-runtime](topics/agentic-verification-runtime.md) — self-verification as critical infrastructure; 3 failing environment strategies; 5 requirements; virtualized full-stack (shared stable stack + per-change isolated delta, 1-2 services not sixty); CLI+feature map interface; human review math; industry context
+
+## Jev-as-a-Judge / Agent Evals (R-014)
+
+- [jev-as-a-judge-evals](topics/jev-as-a-judge-evals.md) — JaaJ pattern, LangChain Sep 2026 experiment (100% accuracy, 92–913× lower variance, $0.00035/call vs $28.17 for Claude), design guidance, scale implications
+
 ## TypeSafe AI and System One (R-013)
 
 - [typesafe-ai-system-one](topics/typesafe-ai-system-one.md) — how TypeSafe’s typed decision model works, what it solves, LLM comparison, limitations, and the likelihood/difficulty of local reproduction
